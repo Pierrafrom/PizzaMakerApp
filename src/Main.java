@@ -1,3 +1,5 @@
+import model.Kitchen;
+import model.PizzaMaker;
 import style.SButton;
 import style.SButton.ButtonType;
 import style.SFrame;
@@ -11,9 +13,61 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Main {
-
+    public static final int NB_PM = 3;
+    public static final int MAX_ORDERS = 20;
     public static void main(String[] args) {
+        // Create and show the GUI (assuming createAndShowGUI is a method in your Main class)
         SwingUtilities.invokeLater(Main::createAndShowGUI);
+
+        PizzaMaker[] team = new PizzaMaker[NB_PM];
+
+        team[0] = new PizzaMaker(1, "Vinsmoke", "Sanji", true, PizzaMaker.Level.PRO);
+        team[1] = new PizzaMaker(2, "Giovanna", "Giorno", true, PizzaMaker.Level.INTERMEDIATE);
+        team[2] = new PizzaMaker(3, "Corleone", "Vito", true, PizzaMaker.Level.BEGINNER);
+
+        int[] i = new int[MAX_ORDERS];
+        i[0] = 31;
+        i[1] = 32;
+        i[2] = 33;
+        i[3] = 35;
+        i[4] = 37;
+        i[5] = 39;
+        i[6] = 74;
+        i[7] = 99;
+        i[8] = 65;
+        i[9] = 48;
+
+        Kitchen kitchen = new Kitchen(team, i);
+
+
+
+        /*----------------- TEST CASES --------------------*/
+        System.out.println("ouais maggle");
+        for(int j = 0; j<i.length; j++) {
+            // Simulate order taking
+            team[0].takeOrder(i[j]); // Should be able to take the order immediately
+            team[1].takeOrder(i[j]); // Should be able to take the order immediately
+            team[2].takeOrder(i[j]); // Should be able to take the order immediately
+
+            // Simulate order taking within the 2-minute cooldown period
+            team[0].takeOrder(i[j]); // Should print a message that the Pizza Maker needs to wait
+            team[1].takeOrder(i[j]); // Should print a message that the Pizza Maker needs to wait
+            team[2].takeOrder(i[j]); // Should print a message that the Pizza Maker needs to wait
+
+            // Wait for 2 minutes
+            try {
+                Thread.sleep(120000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            // Simulate order taking after the cooldown period
+            team[0].takeOrder(i[j]); // Should be able to take the order immediately
+            team[1].takeOrder(i[j]); // Should be able to take the order immediately
+            team[2].takeOrder(i[j]); // Should be able to take the order immediately
+        }
+
+
     }
 
     private static void createAndShowGUI() {
