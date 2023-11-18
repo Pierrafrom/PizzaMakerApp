@@ -1,13 +1,33 @@
 package model;
 
-public class Kitchen {
-    private PizzaMaker[] pizzaMakersTeam;
-    private int[] orderList; //for now lets say that you just input in this array the id of every order
+import java.util.Queue;
+import java.util.LinkedList;
 
-    public Kitchen(PizzaMaker[] PMT, int[] cL){
-        this.pizzaMakersTeam = PMT;
-        this.orderList = cL;
+public class Kitchen {
+    private Queue<Integer> orderQueue = new LinkedList<>();
+    private PizzaMaker[] team;
+
+    public Kitchen(PizzaMaker[] team, int[] orders) {
+        this.team = team;
+        for (int order : orders) {
+            orderQueue.add(order);
+        }
     }
 
+    // Method to set the team of PizzaMakers
+    public void setTeam(PizzaMaker[] team) {
+        this.team = team;
+        for (PizzaMaker maker : team) {
+            maker.setKitchen(this); // Set the kitchen reference for each PizzaMaker
+        }
+    }
+
+    public synchronized Integer getNextOrder() {
+        return orderQueue.poll(); // Retrieves and removes the head of the queue, or returns null if the queue is empty.
+    }
+
+    public boolean hasMoreOrders() {
+        return !orderQueue.isEmpty();
+    }
 
 }

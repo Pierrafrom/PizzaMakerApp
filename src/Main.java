@@ -11,61 +11,26 @@ import utils.ImageResizer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
 
 public class Main {
     public static final int NB_PM = 3;
     public static final int MAX_ORDERS = 20;
-    public static void main(String[] args) {
-        // Create and show the GUI (assuming createAndShowGUI is a method in your Main class)
-        SwingUtilities.invokeLater(Main::createAndShowGUI);
 
+    public static void main(String[] args) {
         PizzaMaker[] team = new PizzaMaker[NB_PM];
 
-        team[0] = new PizzaMaker(1, "Vinsmoke", "Sanji", true, PizzaMaker.Level.PRO);
-        team[1] = new PizzaMaker(2, "Giovanna", "Giorno", true, PizzaMaker.Level.INTERMEDIATE);
-        team[2] = new PizzaMaker(3, "Corleone", "Vito", true, PizzaMaker.Level.BEGINNER);
+        team[0] = new PizzaMaker(1, "Vinsmoke", "Sanji", PizzaMaker.Level.PRO);
+        team[1] = new PizzaMaker(2, "Giovanna", "Giorno", PizzaMaker.Level.INTERMEDIATE);
+        team[2] = new PizzaMaker(3, "Corleone", "Vito",  PizzaMaker.Level.BEGINNER);
 
-        int[] i = new int[MAX_ORDERS];
-        i[0] = 31;
-        i[1] = 32;
-        i[2] = 33;
-        i[3] = 35;
-        i[4] = 37;
-        i[5] = 39;
-        i[6] = 74;
-        i[7] = 99;
-        i[8] = 65;
-        i[9] = 48;
+        Kitchen cookingshit = new Kitchen(team, new int[]{1,2,5,3,4,6,84,51,12,62});
+        cookingshit.setTeam(team);
+        team[0].start();
+        team[1].start();
+        team[2].start();
 
-        Kitchen kitchen = new Kitchen(team, i);
-
-
-
-        /*----------------- TEST CASES --------------------*/
-        System.out.println("ouais maggle");
-        for(int j = 0; j<i.length; j++) {
-            // Simulate order taking
-            team[0].takeOrder(i[j]); // Should be able to take the order immediately
-            team[1].takeOrder(i[j]); // Should be able to take the order immediately
-            team[2].takeOrder(i[j]); // Should be able to take the order immediately
-
-            // Simulate order taking within the 2-minute cooldown period
-            team[0].takeOrder(i[j]); // Should print a message that the Pizza Maker needs to wait
-            team[1].takeOrder(i[j]); // Should print a message that the Pizza Maker needs to wait
-            team[2].takeOrder(i[j]); // Should print a message that the Pizza Maker needs to wait
-
-            // Wait for 2 minutes
-            try {
-                Thread.sleep(120000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            // Simulate order taking after the cooldown period
-            team[0].takeOrder(i[j]); // Should be able to take the order immediately
-            team[1].takeOrder(i[j]); // Should be able to take the order immediately
-            team[2].takeOrder(i[j]); // Should be able to take the order immediately
-        }
 
 
     }
