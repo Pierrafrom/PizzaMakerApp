@@ -11,35 +11,45 @@ import utils.ImageResizer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-
 
 public class Main {
+    // Constants for the number of pizza makers and maximum orders
     public static final int NB_PM = 3;
     public static final int MAX_ORDERS = 20;
 
     public static void main(String[] args) {
+        // Invoking the GUI creation and display
+        SwingUtilities.invokeLater(Main::createAndShowGUI);
+
+        // Creating an array to store the pizza maker team
         PizzaMaker[] team = new PizzaMaker[NB_PM];
 
+        // Initializing pizza makers with different skill levels
         team[0] = new PizzaMaker(1, "Vinsmoke", "Sanji", PizzaMaker.Level.PRO);
         team[1] = new PizzaMaker(2, "Giovanna", "Giorno", PizzaMaker.Level.INTERMEDIATE);
-        team[2] = new PizzaMaker(3, "Corleone", "Vito",  PizzaMaker.Level.BEGINNER);
+        team[2] = new PizzaMaker(3, "Corleone", "Vito", PizzaMaker.Level.BEGINNER);
 
-        Kitchen cookingshit = new Kitchen(team, new int[]{1,2,5,3,4,6,84,51,12,62});
-        cookingshit.setTeam(team);
+        // Creating a kitchen with the pizza maker team and initial orders
+        // for now the orders will just be IDs but in the future it will maybe interact with the database
+        Kitchen baratie = new Kitchen(team, new int[]{1, 2, 5, 3, 4, 6, 84, 51, 12, 62});
+
+        // Setting the pizza maker team for the kitchen
+        baratie.setTeam(team);
+
+        // Starting the threads for each pizza maker
         team[0].start();
         team[1].start();
         team[2].start();
-
-
-
     }
 
+    /**
+     * Creates and shows the graphical user interface with stylized components.
+     */
     private static void createAndShowGUI() {
-        // Création de la fenêtre principale
+        // Creating the main window
         SFrame frame = new SFrame("Test SComponents", 400, 300);
 
-        // Création et ajout des composants stylisés
+        // Creating and adding stylized components to the panel
         JPanel contentPanel = new SPanel();
         contentPanel.setLayout(new FlowLayout());
 
@@ -51,31 +61,25 @@ public class Main {
         // Test SLabel
         SLabel label = new SLabel("Test Label", SLabel.FontStyle.TITLE);
 
-        ImageIcon imageIcon = ImageLoader.loadImageIcon("logo.png"); // Assurez-vous que "logo.png" est le bon chemin
+        // Loading and resizing an image
+        ImageIcon imageIcon = ImageLoader.loadImageIcon("logo.png"); // Make sure "logo.png" is the correct path
         if (imageIcon != null) {
-            // Convertir ImageIcon en BufferedImage
             BufferedImage bufferedImage = ImageResizer.iconToBufferedImage(imageIcon);
-
-            // Redimensionner l'image
             BufferedImage resizedImage = ImageResizer.resizeImage(bufferedImage, 100, 100);
-
-            // Créer un nouvel ImageIcon à partir de l'image redimensionnée
             ImageIcon resizedIcon = new ImageIcon(resizedImage);
-
-            // Ajouter l'image redimensionnée à un JLabel et l'ajouter au panneau
             JLabel imageLabel = new JLabel(resizedIcon);
             contentPanel.add(imageLabel);
         } else {
             System.err.println("Image not found or could not be loaded.");
         }
 
-        // Ajout des composants au panel
+        // Adding components to the panel
         contentPanel.add(primaryButton);
         contentPanel.add(secondaryButton);
         contentPanel.add(errorButton);
         contentPanel.add(label);
 
-        // Ajout du panel à la fenêtre
+        // Adding the panel to the window
         frame.setContentPane(contentPanel);
         frame.setVisible(true);
     }
