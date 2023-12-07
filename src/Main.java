@@ -54,7 +54,7 @@ public class Main {
         contentPanel.setLayout(new FlowLayout());
 
         // Test SButton
-        SButton primaryButton = new SButton("Primary", ButtonType.PRIMARY);
+        SButton primaryButton = new SButton("Primary", ButtonType.NEUTRAL);
         SButton secondaryButton = new SButton("Secondary", ButtonType.SECONDARY);
         SButton errorButton = new SButton("Error", ButtonType.ERROR);
 

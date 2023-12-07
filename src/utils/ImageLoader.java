@@ -7,7 +7,7 @@ import java.net.URL;
 
 /**
  * ImageLoader is a utility class for loading images into a Java Swing application.
- * It provides methods to load an image from the resources directory.
+ * It provides methods to load an image from the ressources directory.
  */
 public class ImageLoader {
     // Path to the directory where image files are stored

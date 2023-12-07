@@ -52,6 +52,11 @@ public interface Style {
      */
     Color SECONDARY_HOVER_COLOR = Color.decode("#811d23");
 
+    /**
+     * Neutral hover color, a darker shade of the neutral color.
+     */
+    Color NEUTRAL_HOVER_COLOR = Color.decode("#6d6473");
+
     // Additional colors
     /**
      * Color used for glass effects, a very light white with 10% opacity.
