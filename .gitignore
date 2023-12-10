@@ -32,3 +32,4 @@ bin/
 # Ignore specific files
 PizzaMakerApp.iml
 /src/config/DBconfig.java
+/src/config/

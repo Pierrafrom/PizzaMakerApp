@@ -120,4 +120,5 @@ public class SSplitPanel extends SPanel {
         frame.setLocationRelativeTo(null); // Center the window
         frame.setVisible(true);
     }
+
 }

@@ -10,13 +10,8 @@ public class DatabaseTest extends config.DBconfig {
 
     public static void main(String[] args) {
         try {
-            // Accessing constants from the interface
-            String url = DBconfig.DATABASE_URL;
-            String username = DBconfig.USERNAME;
-            String password = DBconfig.PASSWORD;
-
             // Establishing a database connection
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(DBconfig.DATABASE_URL, DBconfig.USERNAME, DBconfig.PASSWORD);
 
             // Perform your database operations here
             // Example SELECT query
