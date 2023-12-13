@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import static utils.DatabaseManager.executeQuery;
 
@@ -32,6 +33,7 @@ public class VPizzaMakerApp {
     private JTextArea textArea;
     private SButton bigButton;
     private SButton refuseButton;
+    int selectedOrder;
 
 
 
@@ -47,6 +49,7 @@ public class VPizzaMakerApp {
 
         // Creating the SSplitPanel
         splitPanel = new SSplitPanel();
+
 
         //************************************* Left panel customization ***************************************
         SPanel leftPanel = splitPanel.getLeftPanel();
@@ -110,7 +113,6 @@ public class VPizzaMakerApp {
         // Directly adding the button panel to the right panel at the bottom
         rightPanel.add(buttonPanel, BorderLayout.SOUTH);
         //***************************************************************************************************
-
         frame.add(splitPanel);
     }
 
@@ -122,13 +124,16 @@ public class VPizzaMakerApp {
      */
     public void addPizzaSelectionListener(ListSelectionListener listener) {
         orderIdList.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                int selectedOrderId = orderIdList.getSelectedValue(); // Getting the selected order ID
-                displayOrderInfo(selectedOrderId); // Displaying order information for the selected order ID
+            Integer selectedOrderId = orderIdList.getSelectedValue();
+            System.out.println("Selected Order ID: " + selectedOrderId);
+
+                displayOrderInfo(selectedOrderId);
                 listener.valueChanged(e);
-            }
+
         });
     }
+
+
 
     /**
      * Adds an ActionListener to the "VALIDATE ORDER" button to listen for button clicks.
@@ -154,19 +159,62 @@ public class VPizzaMakerApp {
      *
      * @param text The new text to be displayed.
      */
-    public void updateRightPanelText(String text) {
+    public void updateRightPanel(String text) {
         textArea.setText(text);
     }
 
-    /**
-     * Gets the selected pizza's order ID from the JList.
-     *
-     * @return The selected pizza's order ID as a string, or an empty string if no selection is made.
-     */
-    public String getSelectedPizza() {
-        Integer selectedValue = orderIdList.getSelectedValue();
-        return (selectedValue != null) ? selectedValue.toString() : "";
+    public void updateLeftPanel(int orderToDelete) {
+        DefaultListModel<Integer> listModel = new DefaultListModel<>();
+        try {
+            String query = "SELECT DISTINCT orderId FROM view_order_summary";
+            try (ResultSet resultSet = executeQuery(query)) {
+                while (resultSet.next()) {
+                    int orderId = resultSet.getInt("orderId");
+                    if (orderId != orderToDelete) {
+                        listModel.addElement(orderId);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        SPanel leftPanel = splitPanel.getLeftPanel();
+        leftPanel.removeAll();  // Clear previous components
+
+        // Creating a JList with the list model
+        orderIdList = new JList<>(listModel);
+        orderIdList.setFont(Style.TEXT_FONT);
+        orderIdList.setForeground(Style.TEXT_COLOR);
+        orderIdList.setBackground(Style.BACKGROUND_COLOR);
+        orderIdList.setSelectionForeground(Style.TEXT_COLOR);
+        orderIdList.setSelectionBackground(Style.PRIMARY_HOVER_COLOR);
+
+        // Setting up a scroll pane for the JList
+        SScrollPane scrollPane = new SScrollPane(orderIdList);
+        scrollPane.setVerticalScrollBarPolicy(SScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        leftPanel.add(scrollPane);
+
+        // Update the left panel in the split panel
+        splitPanel.setLeftPanel(leftPanel);
+        System.out.println("Updating left panel. Order to delete: " + orderToDelete);
+
     }
+
+
+
+
+
+    /**
+     * Gets the selected order ID from the JList.
+     *
+     * @return The selected order ID as an int.
+     */
+    public int getDeletedOrder() {
+        return orderIdList.getSelectedValue(); // Assuming orderIdList is your JList
+    }
+
+
 
     /**
      * Displays the main application window.
@@ -177,7 +225,6 @@ public class VPizzaMakerApp {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
-
 
     /**
      * Populates the DefaultListModel with order IDs retrieved from the database.

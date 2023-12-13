@@ -35,8 +35,8 @@ public class CPizzaMakerApp {
         // Add listeners and connect view with model
         view.addPizzaSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
-                String selectedPizza = view.getSelectedPizza();
-                model.setSelectedPizza(selectedPizza);
+                int selectedorder = view.getDeletedOrder();
+                model.setSelectedPizza(selectedorder);
             }
         });
 
@@ -63,7 +63,9 @@ public class CPizzaMakerApp {
      * order has been validated.
      */
     private void handleValidatePizzaButtonClick() {
-        view.updateRightPanelText("ORDER VALIDATED, PLEASE SELECT ANOTHER ORDER");
+        view.updateRightPanel("ORDER VALIDATED, PLEASE SELECT ANOTHER ORDER");
+        view.updateLeftPanel(view.getDeletedOrder());
+        //view.update();
     }
 
     /**
@@ -72,7 +74,9 @@ public class CPizzaMakerApp {
      * order has been refused.
      */
     private void handleRefusePizzaButtonClick() {
-        view.updateRightPanelText("ORDER REFUSED, PLEASE SELECT ANOTHER ORDER");
+        view.updateRightPanel("ORDER REFUSED, PLEASE SELECT ANOTHER ORDER");
+        view.updateLeftPanel(view.getDeletedOrder());
+        //view.update();
     }
 
     /**

@@ -11,14 +11,14 @@ package model;
  */
 
 public class MPizzaMakerApp {
-    private String selectedPizza;
+    private int selectedPizza;
 
     /**
      * Gets the currently selected pizza.
      *
      * @return A string representing the currently selected pizza.
      */
-    public String getSelectedPizza() {
+    public int getSelectedPizza() {
         return selectedPizza;
     }
 
@@ -27,7 +27,7 @@ public class MPizzaMakerApp {
      *
      * @param selectedPizza A string representing the newly selected pizza.
      */
-    public void setSelectedPizza(String selectedPizza) {
+    public void setSelectedPizza(int selectedPizza) {
         this.selectedPizza = selectedPizza;
     }
 

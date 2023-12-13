@@ -93,10 +93,13 @@ public class DatabaseManager {
     }
 
     public static void main(String[] args) {
+        /*
         try {
-            printFormattedResults(executeQuery("SELECT DISTINCT orderId FROM view_order_summary"));
+            printFormattedResults(executeQuery("SELECT * FROM VIEW_ORDER_SUMMARY"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+         */
     }
 }
