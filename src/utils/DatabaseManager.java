@@ -32,6 +32,13 @@ public class DatabaseManager {
         return preparedStatement.executeQuery();
     }
 
+
+    public static void executeQuery2(String sqlQuery, int orderId) throws SQLException {
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+        preparedStatement.setInt(1, orderId);
+        preparedStatement.executeUpdate();
+    }
     //créer mes fonctions
 
 

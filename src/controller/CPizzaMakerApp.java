@@ -5,7 +5,7 @@ import view.VPizzaMakerApp;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.sql.SQLException;
 
 
 /**
@@ -35,7 +35,14 @@ public class CPizzaMakerApp {
         // Add listeners and connect view with model
         view.addPizzaSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
-                int selectedorder = view.getDeletedOrder();
+                int selectedorder = view.orderIdList.getSelectedValue();
+                model.setSelectedPizza(selectedorder);
+            }
+        });
+
+        view.addPizzaSelectionListenerUpd(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedorder = view.orderIdListUpd.getSelectedValue();
                 model.setSelectedPizza(selectedorder);
             }
         });
@@ -44,17 +51,49 @@ public class CPizzaMakerApp {
         view.addValidatePizzaButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleValidatePizzaButtonClick();
+                try {
+                    handleValidatePizzaButtonClick(false);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
+
+        view.addValidatePizzaButtonListenerUpd(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    handleValidatePizzaButtonClick(true);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
 
         // Adding ActionListener to the button in the view
         view.addRefusePizzaButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleRefusePizzaButtonClick();
+                try {
+                    handleRefusePizzaButtonClick(false);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
+
+        view.addRefusePizzaButtonListenerUpd(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    handleRefusePizzaButtonClick(true);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
     }
 
     /**
@@ -62,10 +101,22 @@ public class CPizzaMakerApp {
      * updates the view's right panel text, and notifies the model that the
      * order has been validated.
      */
-    private void handleValidatePizzaButtonClick() {
+    private void handleValidatePizzaButtonClick(boolean upd) throws SQLException {
+        /*
         view.updateRightPanel("ORDER VALIDATED, PLEASE SELECT ANOTHER ORDER");
-        view.updateLeftPanel(view.getDeletedOrder());
-        //view.update();
+        view.updateLeftPanel(view.getDeletedOrder());*/
+        if (upd) {
+            view.deleteAllComponents();
+            model.updateOrderStatus(view.orderIdListUpd.getSelectedValue(), 1);
+            view.update();
+            System.out.println("validated");
+        }
+        else {
+            view.deleteAllComponents();
+            model.updateOrderStatus(view.orderIdList.getSelectedValue(), 1);
+            view.update();
+            System.out.println("validated");
+        }
     }
 
     /**
@@ -73,10 +124,22 @@ public class CPizzaMakerApp {
      * updates the view's right panel text, and notifies the model that the
      * order has been refused.
      */
-    private void handleRefusePizzaButtonClick() {
+    private void handleRefusePizzaButtonClick(boolean upd) throws SQLException {
+        /*
         view.updateRightPanel("ORDER REFUSED, PLEASE SELECT ANOTHER ORDER");
-        view.updateLeftPanel(view.getDeletedOrder());
-        //view.update();
+        view.updateLeftPanel(view.getDeletedOrder());*/
+        if (upd) {
+            view.deleteAllComponents();
+            model.updateOrderStatus(view.orderIdListUpd.getSelectedValue(), 1);
+            view.update();
+            System.out.println("canceled");
+        }
+        else {
+            view.deleteAllComponents();
+            model.updateOrderStatus(view.orderIdList.getSelectedValue(), 1);
+            view.update();
+            System.out.println("canceled");
+        }
     }
 
     /**
@@ -85,4 +148,6 @@ public class CPizzaMakerApp {
     public void startApplication() {
         view.show();
     }
+
+
 }

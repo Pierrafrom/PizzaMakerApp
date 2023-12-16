@@ -30,10 +30,13 @@ public class VPizzaMakerApp {
     private SFrame frame;
     private SSplitPanel splitPanel;
     public JList<Integer> orderIdList;
+    public JList<Integer> orderIdListUpd  = new JList<Integer> ();
     private JTextArea textArea;
+    private JTextArea textAreaUpd;
     private SButton bigButton;
+    private SButton bigButtonUpd = new SButton("VALIDATE ORDER", SButton.ButtonType.PRIMARY, 5);
     private SButton refuseButton;
-    int selectedOrder;
+    private SButton refuseButtonUpd = new SButton("REFUSE ORDER", SButton.ButtonType.ERROR, 5);
 
 
 
@@ -124,15 +127,26 @@ public class VPizzaMakerApp {
      */
     public void addPizzaSelectionListener(ListSelectionListener listener) {
         orderIdList.addListSelectionListener(e -> {
-            Integer selectedOrderId = orderIdList.getSelectedValue();
-            System.out.println("Selected Order ID: " + selectedOrderId);
-
-                displayOrderInfo(selectedOrderId);
-                listener.valueChanged(e);
-
+            if (!e.getValueIsAdjusting()) {
+                Integer selectedOrderId = orderIdList.getSelectedValue();
+                if (selectedOrderId != null) {
+                    textArea.setText(displayOrderInfo(selectedOrderId));
+                    listener.valueChanged(e);
+                }
+            }
         });
     }
-
+    public void addPizzaSelectionListenerUpd(ListSelectionListener listener) {
+        orderIdListUpd.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                Integer selectedOrderId = orderIdListUpd.getSelectedValue();
+                if (selectedOrderId != null) {
+                    textAreaUpd.setText(displayOrderInfo(selectedOrderId));
+                    listener.valueChanged(e);
+                }
+            }
+        });
+    }
 
 
     /**
@@ -144,6 +158,10 @@ public class VPizzaMakerApp {
     public void addValidatePizzaButtonListener(ActionListener listener) {
         bigButton.addActionListener(listener);
     }
+    public void addValidatePizzaButtonListenerUpd(ActionListener listener) {
+        bigButtonUpd.addActionListener(listener);
+    }
+
     /**
      * Adds an ActionListener to the "REFUSE ORDER" button to listen for button clicks.
      * When the button is clicked, the provided listener is notified.
@@ -154,66 +172,9 @@ public class VPizzaMakerApp {
         refuseButton.addActionListener(listener);
     }
 
-    /**
-     * Updates the text displayed in the JTextArea in the right panel.
-     *
-     * @param text The new text to be displayed.
-     */
-    public void updateRightPanel(String text) {
-        textArea.setText(text);
+    public void addRefusePizzaButtonListenerUpd(ActionListener listener) {
+        refuseButtonUpd.addActionListener(listener);
     }
-
-    public void updateLeftPanel(int orderToDelete) {
-        DefaultListModel<Integer> listModel = new DefaultListModel<>();
-        try {
-            String query = "SELECT DISTINCT orderId FROM view_order_summary";
-            try (ResultSet resultSet = executeQuery(query)) {
-                while (resultSet.next()) {
-                    int orderId = resultSet.getInt("orderId");
-                    if (orderId != orderToDelete) {
-                        listModel.addElement(orderId);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        SPanel leftPanel = splitPanel.getLeftPanel();
-        leftPanel.removeAll();  // Clear previous components
-
-        // Creating a JList with the list model
-        orderIdList = new JList<>(listModel);
-        orderIdList.setFont(Style.TEXT_FONT);
-        orderIdList.setForeground(Style.TEXT_COLOR);
-        orderIdList.setBackground(Style.BACKGROUND_COLOR);
-        orderIdList.setSelectionForeground(Style.TEXT_COLOR);
-        orderIdList.setSelectionBackground(Style.PRIMARY_HOVER_COLOR);
-
-        // Setting up a scroll pane for the JList
-        SScrollPane scrollPane = new SScrollPane(orderIdList);
-        scrollPane.setVerticalScrollBarPolicy(SScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        leftPanel.add(scrollPane);
-
-        // Update the left panel in the split panel
-        splitPanel.setLeftPanel(leftPanel);
-        System.out.println("Updating left panel. Order to delete: " + orderToDelete);
-
-    }
-
-
-
-
-
-    /**
-     * Gets the selected order ID from the JList.
-     *
-     * @return The selected order ID as an int.
-     */
-    public int getDeletedOrder() {
-        return orderIdList.getSelectedValue(); // Assuming orderIdList is your JList
-    }
-
 
 
     /**
@@ -226,6 +187,85 @@ public class VPizzaMakerApp {
         frame.setVisible(true);
     }
 
+    public void update() {
+        splitPanel = new SSplitPanel();
+        SPanel leftPanel = splitPanel.getLeftPanel();
+        SPanel rightPanel = splitPanel.getRightPanel();
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        rightPanel.setLayout(new BorderLayout());
+
+        DefaultListModel<Integer> listModel = new DefaultListModel<>();
+        listModel.clear();
+        populateListModel(listModel);
+        orderIdListUpd.setModel(listModel);
+        orderIdListUpd.setFont(Style.TEXT_FONT);
+        orderIdListUpd.setForeground(Style.TEXT_COLOR);
+        orderIdListUpd.setBackground(Style.BACKGROUND_COLOR);
+        orderIdListUpd.setSelectionForeground(Style.TEXT_COLOR);
+        orderIdListUpd.setSelectionBackground(Style.PRIMARY_HOVER_COLOR);
+
+        SScrollPane scrollPane = new SScrollPane(orderIdListUpd);
+        scrollPane.setVerticalScrollBarPolicy(SScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setBackground(Style.BACKGROUND_COLOR);
+        leftPanel.add(scrollPane);
+
+        // Creating a JTextArea for the multiline text
+        textAreaUpd = new JTextArea(10, 20);
+        textAreaUpd.setText("PLEASE SELECT AN ORDER");
+        textAreaUpd.setEditable(false);
+        textAreaUpd.setWrapStyleWord(true);
+        textAreaUpd.setLineWrap(true);
+        textAreaUpd.setFont(Style.TEXT_FONT);
+        textAreaUpd.setForeground(Style.TEXT_COLOR);
+        textAreaUpd.setBackground(Style.BACKGROUND_COLOR);
+        textAreaUpd.setBorder(null);
+
+        // Setting up a scroll pane for the JTextArea
+        SScrollPane scrollPane2 = new SScrollPane(textAreaUpd);
+        scrollPane2.setVerticalScrollBarPolicy(SScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        rightPanel.add(scrollPane2, BorderLayout.CENTER);
+
+        // Panel to hold both buttons with BoxLayout for horizontal centering
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+        buttonPanel.add(Box.createHorizontalGlue());
+        buttonPanel.add(bigButtonUpd);
+        buttonPanel.add(Box.createHorizontalStrut(10));
+        buttonPanel.add(refuseButtonUpd);
+        buttonPanel.add(Box.createHorizontalGlue());
+        buttonPanel.setBackground(Style.BACKGROUND_COLOR);
+
+        rightPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        frame.add(splitPanel);
+    }
+
+
+    public void deleteAllComponents() {
+            // Clear components from the left panel
+            SPanel leftPanel = splitPanel.getLeftPanel();
+            leftPanel.removeAll();
+
+            // Clear components from the right panel
+            SPanel rightPanel = splitPanel.getRightPanel();
+            rightPanel.removeAll();
+
+            splitPanel.removeAll();
+
+            // Repaint the panels to reflect the changes
+            leftPanel.revalidate();
+            leftPanel.repaint();
+            rightPanel.revalidate();
+            rightPanel.repaint();
+            splitPanel.revalidate();
+            splitPanel.repaint();
+            leftPanel = null;
+            rightPanel = null;
+            splitPanel = null;
+    }
+
+
+
     /**
      * Populates the DefaultListModel with order IDs retrieved from the database.
      * Uses a SQL query to fetch distinct order IDs from the "VIEW_ORDER_SUMMARY" view.
@@ -234,7 +274,7 @@ public class VPizzaMakerApp {
      */
     private void populateListModel(DefaultListModel<Integer> listModel) {
         try {
-            String query = "SELECT DISTINCT orderId FROM view_order_summary";
+            String query = "SELECT DISTINCT orderId FROM view_order_summary WHERE status = 'PENDING'";
             try (ResultSet resultSet = executeQuery(query)) {
                 while (resultSet.next()) {
                     int orderId = resultSet.getInt("orderId");
@@ -252,7 +292,7 @@ public class VPizzaMakerApp {
      *
      * @param orderId The ID of the order for which information should be displayed.
      */
-    public void displayOrderInfo(int orderId) {
+    public String displayOrderInfo(int orderId) {
         try {
             // SQL query to retrieve order details for the specified order ID
             String query = "SELECT * FROM VIEW_ORDER_SUMMARY WHERE orderId = " + orderId;
@@ -318,10 +358,11 @@ public class VPizzaMakerApp {
                 }
 
                 // Setting the order details in the text area
-                textArea.setText(orderDetails.toString());
+                return orderDetails.toString();
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return "error";
         }
     }
 
