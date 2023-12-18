@@ -13,7 +13,7 @@ public class SPanel extends JPanel {
      * Creates a new SPanel with a default layout manager and preferred size.
      */
     public SPanel() {
-        this(null, new Dimension(200, 200)); // Default size can be adjusted as needed
+        this(null, new Dimension(10, 10)); // Default size can be adjusted as needed
     }
 
     /**
@@ -22,7 +22,7 @@ public class SPanel extends JPanel {
      * @param layout the LayoutManager to use
      */
     public SPanel(LayoutManager layout) {
-        this(layout, new Dimension(200, 200)); // Default size can be adjusted as needed
+        this(layout, new Dimension(10, 10)); // Default size can be adjusted as needed
     }
 
     /**
@@ -41,7 +41,7 @@ public class SPanel extends JPanel {
      * Initializes the style of the panel using constants from the Style interface.
      */
     private void initializeStyle() {
-        setBackground(Style.BACKGROUND_COLOR);
+        setBackground(Color.pink);
     }
 
 }

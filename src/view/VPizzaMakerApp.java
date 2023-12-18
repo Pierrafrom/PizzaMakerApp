@@ -7,18 +7,15 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import static utils.DatabaseManager.executeQuery;
 
 
 
 /**
- * The VPizzaMakerApp class represents the graphical user interface for a pizza maker application.
+ * The {@code VPizzaMakerApp} class represents the graphical user interface for a pizza maker application.
  * It allows the user to view and interact with pizza orders, display order details, and validate orders.
  * The application uses Swing components for the graphical interface and interacts with a MariaDB database
  * to retrieve and display order information.
@@ -41,89 +38,81 @@ public class VPizzaMakerApp {
 
 
     /**
-     * Constructs a new VPizzaMakerApp instance.
+     * Constructs a new {@code VPizzaMakerApp} instance.
      * Initializes the main window, split panel, left and right panels, and components such as JList and JTextArea.
      * Also populates the JList with order IDs retrieved from the database.
      */
     public VPizzaMakerApp() {
         // Creating the main window
         frame = new SFrame("TESTING 🔥🥵💀⚠️🥶🥶🥶");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         // Creating the SSplitPanel
-        splitPanel = new SSplitPanel();
 
-
-        //************************************* Left panel customization ***************************************
-        SPanel leftPanel = splitPanel.getLeftPanel();
+        SPanel leftPanel = new SPanel();
+        SPanel rightPanel = new SPanel();
+        splitPanel = new SSplitPanel(leftPanel,rightPanel);
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-
-        // Creating a DefaultListModel for Integer
-        DefaultListModel<Integer> listModel = new DefaultListModel<>();
-
-        // Populating the list model with data from the "VIEW_ORDER_SUMMARY" view
-        populateListModel(listModel);
-
-        // Creating a JList with the list model
-        orderIdList = new JList<>(listModel);
-        orderIdList.setFont(Style.TEXT_FONT);
-        orderIdList.setForeground(Style.TEXT_COLOR);
-        orderIdList.setBackground(Style.BACKGROUND_COLOR);
-        orderIdList.setSelectionForeground(Style.TEXT_COLOR);
-        orderIdList.setSelectionBackground(Style.PRIMARY_HOVER_COLOR);
-
-        // Setting up a scroll pane for the JList
-        SScrollPane scrollPane = new SScrollPane(orderIdList);
-        scrollPane.setVerticalScrollBarPolicy(SScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        leftPanel.add(scrollPane);
-        //***************************************************************************************************
-
-
-
-        //************************************* Right panel customization **********************************
-        SPanel rightPanel = splitPanel.getRightPanel();
         rightPanel.setLayout(new BorderLayout());
-
-        // Creating a JTextArea for the multiline text
+        // Creating a JList with the list model
+        orderIdList = new JList<>();
         textArea = new JTextArea(10, 20);
-        textArea.setText("PLEASE SELECT AN ORDER");
-        textArea.setEditable(false);
-        textArea.setWrapStyleWord(true);
-        textArea.setLineWrap(true);
-        textArea.setFont(Style.TEXT_FONT);
-        textArea.setForeground(Style.TEXT_COLOR);
-        textArea.setBackground(Style.BACKGROUND_COLOR);
-        textArea.setBorder(null);
-
-        // Setting up a scroll pane for the JTextArea
-        SScrollPane scrollPane2 = new SScrollPane(textArea);
-        scrollPane2.setVerticalScrollBarPolicy(SScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        rightPanel.add(scrollPane2, BorderLayout.CENTER);
-
         bigButton = new SButton("VALIDATE ORDER", SButton.ButtonType.PRIMARY, 5);
         refuseButton = new SButton("REFUSE ORDER", SButton.ButtonType.ERROR, 5);
 
-        // Panel to hold both buttons with BoxLayout for horizontal centering
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
-        buttonPanel.add(Box.createHorizontalGlue());
-        buttonPanel.add(bigButton);
-        buttonPanel.add(Box.createHorizontalStrut(10));
-        buttonPanel.add(refuseButton);
-        buttonPanel.add(Box.createHorizontalGlue());
-        buttonPanel.setBackground(Style.BACKGROUND_COLOR);
+        SwingUtilities.invokeLater(() -> {
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            //************************************* Left panel customization ***************************************
 
-        // Directly adding the button panel to the right panel at the bottom
-        rightPanel.add(buttonPanel, BorderLayout.SOUTH);
-        //***************************************************************************************************
-        frame.add(splitPanel);
+            // Creating a DefaultListModel for Integer
+            DefaultListModel<Integer> listModel = new DefaultListModel<>();
+            // Populating the list model with data from the "VIEW_ORDER_SUMMARY" view
+            populateListModel(listModel);
+            orderIdList.setModel(listModel);
+            orderIdList.setFont(Style.TEXT_FONT);
+            orderIdList.setForeground(Style.TEXT_COLOR);
+            orderIdList.setBackground(Style.BACKGROUND_COLOR);
+            orderIdList.setSelectionForeground(Style.TEXT_COLOR);
+            orderIdList.setSelectionBackground(Style.PRIMARY_HOVER_COLOR);
+            // Setting up a scroll pane for the JList
+            SScrollPane scrollPane = new SScrollPane(orderIdList);
+            scrollPane.setVerticalScrollBarPolicy(SScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            leftPanel.add(scrollPane);
+            //************************************* Right panel customization **********************************
+
+            // Creating a JTextArea for the multiline text
+            textArea.setText("PLEASE SELECT AN ORDER");
+            textArea.setEditable(false);
+            textArea.setWrapStyleWord(true);
+            textArea.setLineWrap(true);
+            textArea.setFont(Style.TEXT_FONT);
+            textArea.setForeground(Style.TEXT_COLOR);
+            textArea.setBackground(Style.BACKGROUND_COLOR);
+            textArea.setBorder(null);
+            // Setting up a scroll pane for the JTextArea
+            SScrollPane scrollPane2 = new SScrollPane(textArea);
+            scrollPane2.setVerticalScrollBarPolicy(SScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            rightPanel.add(scrollPane2, BorderLayout.CENTER);
+
+            // Panel to hold both buttons with BoxLayout for horizontal centering
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+            buttonPanel.add(Box.createHorizontalGlue());
+            buttonPanel.add(bigButton);
+            buttonPanel.add(Box.createHorizontalStrut(10));
+            buttonPanel.add(refuseButton);
+            buttonPanel.add(Box.createHorizontalGlue());
+            buttonPanel.setBackground(Color.MAGENTA);
+            // Directly adding the button panel to the right panel at the bottom
+            rightPanel.add(buttonPanel, BorderLayout.SOUTH);
+            //***************************************************************************************************
+            frame.add(splitPanel);
+        });
     }
 
     /**
-     * Adds a ListSelectionListener to the orderIdList (JList) to listen for selection changes.
+     * Adds a {@code ListSelectionListener} to the orderIdList (JList) to listen for selection changes.
      * When a selection is made, it retrieves the selected order ID and displays the corresponding order information.
      *
-     * @param listener The ListSelectionListener to be added.
+     * @param listener The {@code ListSelectionListener} to be added.
      */
     public void addPizzaSelectionListener(ListSelectionListener listener) {
         orderIdList.addListSelectionListener(e -> {
@@ -150,28 +139,39 @@ public class VPizzaMakerApp {
 
 
     /**
-     * Adds an ActionListener to the "VALIDATE ORDER" button to listen for button clicks.
+     * Adds an {@code ActionListener} to the "VALIDATE ORDER" button to listen for button clicks.
      * When the button is clicked, the provided listener is notified.
      *
-     * @param listener The ActionListener to be added.
+     * @param listener The {@code ActionListener} to be added.
      */
     public void addValidatePizzaButtonListener(ActionListener listener) {
         bigButton.addActionListener(listener);
     }
+
+    /**
+     * Same as the method {addValidatePizzaButtonListener}, we use it to add a listener to the update panel button
+     *
+     * @param listener The {@code ActionListener} to be added.
+     */
     public void addValidatePizzaButtonListenerUpd(ActionListener listener) {
         bigButtonUpd.addActionListener(listener);
     }
 
     /**
-     * Adds an ActionListener to the "REFUSE ORDER" button to listen for button clicks.
+     * Adds an {@code ActionListener} to the "REFUSE ORDER" button to listen for button clicks.
      * When the button is clicked, the provided listener is notified.
      *
-     * @param listener The ActionListener to be added.
+     * @param listener The {@code ActionListener} to be added.
      */
     public void addRefusePizzaButtonListener(ActionListener listener) {
         refuseButton.addActionListener(listener);
     }
 
+    /**
+     * Same as the method {addRefusePizzaButtonListener}, we use it to add a listener to the update panel button
+     *
+     * @param listener The {@code ActionListener} to be added.
+     */
     public void addRefusePizzaButtonListenerUpd(ActionListener listener) {
         refuseButtonUpd.addActionListener(listener);
     }
@@ -187,82 +187,81 @@ public class VPizzaMakerApp {
         frame.setVisible(true);
     }
 
+    /**
+     * Updates the application by refreshing the split panel, left and right panels, and components.
+     * Populates the updated JList with order IDs retrieved from the database.
+     */
     public void update() {
-        splitPanel = new SSplitPanel();
-        SPanel leftPanel = splitPanel.getLeftPanel();
-        SPanel rightPanel = splitPanel.getRightPanel();
-        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-        rightPanel.setLayout(new BorderLayout());
+        SwingUtilities.invokeLater(() -> {
+            SPanel leftPanel = new SPanel();
+            SPanel rightPanel = new SPanel();
+            splitPanel = new SSplitPanel(leftPanel,rightPanel);
+            leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+            rightPanel.setLayout(new BorderLayout());
 
-        DefaultListModel<Integer> listModel = new DefaultListModel<>();
-        listModel.clear();
-        populateListModel(listModel);
-        orderIdListUpd.setModel(listModel);
-        orderIdListUpd.setFont(Style.TEXT_FONT);
-        orderIdListUpd.setForeground(Style.TEXT_COLOR);
-        orderIdListUpd.setBackground(Style.BACKGROUND_COLOR);
-        orderIdListUpd.setSelectionForeground(Style.TEXT_COLOR);
-        orderIdListUpd.setSelectionBackground(Style.PRIMARY_HOVER_COLOR);
+            DefaultListModel<Integer> listModel = new DefaultListModel<>();
+            listModel.clear();
+            populateListModel(listModel);
+            orderIdListUpd.setModel(listModel);
+            orderIdListUpd.setFont(Style.TEXT_FONT);
+            orderIdListUpd.setForeground(Style.TEXT_COLOR);
+            orderIdListUpd.setBackground(Style.BACKGROUND_COLOR);
+            orderIdListUpd.setSelectionForeground(Style.TEXT_COLOR);
+            orderIdListUpd.setSelectionBackground(Style.PRIMARY_HOVER_COLOR);
 
-        SScrollPane scrollPane = new SScrollPane(orderIdListUpd);
-        scrollPane.setVerticalScrollBarPolicy(SScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setBackground(Style.BACKGROUND_COLOR);
-        leftPanel.add(scrollPane);
+            SScrollPane scrollPane = new SScrollPane(orderIdListUpd);
+            scrollPane.setVerticalScrollBarPolicy(SScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            scrollPane.setBackground(Style.BACKGROUND_COLOR);
+            leftPanel.add(scrollPane);
 
-        // Creating a JTextArea for the multiline text
-        textAreaUpd = new JTextArea(10, 20);
-        textAreaUpd.setText("PLEASE SELECT AN ORDER");
-        textAreaUpd.setEditable(false);
-        textAreaUpd.setWrapStyleWord(true);
-        textAreaUpd.setLineWrap(true);
-        textAreaUpd.setFont(Style.TEXT_FONT);
-        textAreaUpd.setForeground(Style.TEXT_COLOR);
-        textAreaUpd.setBackground(Style.BACKGROUND_COLOR);
-        textAreaUpd.setBorder(null);
+            // Creating a JTextArea for the multiline text
+            textAreaUpd = new JTextArea(10, 20);
+            textAreaUpd.setText("PLEASE SELECT AN ORDER");
+            textAreaUpd.setEditable(false);
+            textAreaUpd.setWrapStyleWord(true);
+            textAreaUpd.setLineWrap(true);
+            textAreaUpd.setFont(Style.TEXT_FONT);
+            textAreaUpd.setForeground(Style.TEXT_COLOR);
+            textAreaUpd.setBackground(Style.BACKGROUND_COLOR);
+            textAreaUpd.setBorder(null);
 
-        // Setting up a scroll pane for the JTextArea
-        SScrollPane scrollPane2 = new SScrollPane(textAreaUpd);
-        scrollPane2.setVerticalScrollBarPolicy(SScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        rightPanel.add(scrollPane2, BorderLayout.CENTER);
+            // Setting up a scroll pane for the JTextArea
+            SScrollPane scrollPane2 = new SScrollPane(textAreaUpd);
+            scrollPane2.setVerticalScrollBarPolicy(SScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            rightPanel.add(scrollPane2, BorderLayout.CENTER);
 
-        // Panel to hold both buttons with BoxLayout for horizontal centering
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
-        buttonPanel.add(Box.createHorizontalGlue());
-        buttonPanel.add(bigButtonUpd);
-        buttonPanel.add(Box.createHorizontalStrut(10));
-        buttonPanel.add(refuseButtonUpd);
-        buttonPanel.add(Box.createHorizontalGlue());
-        buttonPanel.setBackground(Style.BACKGROUND_COLOR);
+            // Panel to hold both buttons with BoxLayout for horizontal centering
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+            buttonPanel.add(Box.createHorizontalGlue());
+            buttonPanel.add(bigButtonUpd);
+            buttonPanel.add(Box.createHorizontalStrut(10));
+            buttonPanel.add(refuseButtonUpd);
+            buttonPanel.add(Box.createHorizontalGlue());
+            buttonPanel.setBackground(Style.BACKGROUND_COLOR);
 
-        rightPanel.add(buttonPanel, BorderLayout.SOUTH);
-
-        frame.add(splitPanel);
+            rightPanel.add(buttonPanel, BorderLayout.SOUTH);
+            frame.add(splitPanel);
+        });
     }
 
 
+    /**
+     * Deletes all components from the left and right panels and the split panel.
+     * Repaints the panels to reflect the changes.
+     */
     public void deleteAllComponents() {
-            // Clear components from the left panel
-            SPanel leftPanel = splitPanel.getLeftPanel();
-            leftPanel.removeAll();
-
-            // Clear components from the right panel
-            SPanel rightPanel = splitPanel.getRightPanel();
-            rightPanel.removeAll();
-
+        SwingUtilities.invokeLater(() -> {
             splitPanel.removeAll();
-
-            // Repaint the panels to reflect the changes
-            leftPanel.revalidate();
-            leftPanel.repaint();
-            rightPanel.revalidate();
-            rightPanel.repaint();
             splitPanel.revalidate();
             splitPanel.repaint();
-            leftPanel = null;
-            rightPanel = null;
             splitPanel = null;
+        });
     }
+
+
+
+
 
 
 
@@ -291,6 +290,7 @@ public class VPizzaMakerApp {
      * Retrieves order details from the database and formats them for display.
      *
      * @param orderId The ID of the order for which information should be displayed.
+     * @return A formatted string containing the order details.
      */
     public String displayOrderInfo(int orderId) {
         try {
@@ -310,7 +310,7 @@ public class VPizzaMakerApp {
 
                     StringBuilder ingredients = new StringBuilder();
 
-                    if ("PIZZA".equals(itemType)) {
+                    if ("PIZZA".equals(itemType) || "PIZZA CUSTOM".equals(itemType)) {
                         String queryIngredients = "SELECT * FROM VIEW_PIZZA_INGREDIENTS WHERE id = " + itemId;
                         try (ResultSet rs = executeQuery(queryIngredients)) {
                             while (rs.next()) {
@@ -356,8 +356,6 @@ public class VPizzaMakerApp {
 
                     orderDetails.append("\n");
                 }
-
-                // Setting the order details in the text area
                 return orderDetails.toString();
             }
         } catch (SQLException e) {
