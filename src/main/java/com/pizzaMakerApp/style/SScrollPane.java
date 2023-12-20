@@ -172,7 +172,7 @@ public class SScrollPane extends JScrollPane {
             STextArea textArea = new STextArea();
             textArea.setText("Votre texte ici...\n".repeat(20)); // Texte de démonstration
 
-            // Création et ajout du SScrollPane
+
             SScrollPane scrollPane = new SScrollPane(textArea);
             frame.add(scrollPane, BorderLayout.CENTER);
 

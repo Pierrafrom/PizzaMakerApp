@@ -41,14 +41,14 @@ public class SList<T> extends JList<T> {
 
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            SLabel label = new SLabel(value.toString()); // Utilisation de SLabel ici
+            SLabel label = new SLabel(value.toString());
             label.setOpaque(true);
 
             if (isSelected) {
                 label.setBackground(Style.PRIMARY_COLOR);
-                label.setForeground(Style.TEXT_COLOR); // Vous pouvez ajuster la couleur du texte si nécessaire
+                label.setForeground(Style.TEXT_COLOR);
             } else if (index == hoveredIndex) {
-                label.setBackground(Style.NEUTRAL_HOVER_COLOR);
+                label.setBackground(Style.PRIMARY_HOVER_COLOR);
                 label.setForeground(Style.TEXT_COLOR);
             } else {
                 label.setBackground(Style.BACKGROUND_COLOR);

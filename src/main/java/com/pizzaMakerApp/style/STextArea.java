@@ -21,6 +21,8 @@ public class STextArea extends JTextArea {
      */
     public STextArea() {
         this(""); // Calls the constructor with a String parameter
+        this.setLineWrap(true);        // Enable line wrapping
+        this.setWrapStyleWord(true);   // Wrap at word boundaries
     }
 
     /**

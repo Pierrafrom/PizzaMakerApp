@@ -11,12 +11,12 @@ import java.awt.event.ComponentEvent;
 public class SSplitPane extends JSplitPane {
 
     public SSplitPane() {
-        // Appliquer les styles
-        this.setBackground(Style.BACKGROUND_COLOR);
-        this.setDividerSize(10);
+        // apply styles
+        this.setBackground(Style.NEUTRAL_COLOR);
+        this.setDividerSize(3);
         this.setBorder(null);
 
-        // Personnalisation du séparateur
+        // divider customisation
         this.setUI(new BasicSplitPaneUI() {
             @Override
             public BasicSplitPaneDivider createDefaultDivider() {
@@ -27,7 +27,7 @@ public class SSplitPane extends JSplitPane {
 
                     @Override
                     public void paint(Graphics g) {
-                        g.setColor(Style.NEUTRAL_COLOR);
+                        g.setColor(Style.BACKGROUND_COLOR);
                         g.fillRect(0, 0, getSize().width, getSize().height);
                         super.paint(g);
                     }
@@ -36,7 +36,7 @@ public class SSplitPane extends JSplitPane {
         });
         this.setDividerLocation(0.5);
 
-        // Ajouter un écouteur de redimensionnement pour ajuster le séparateur
+        // creating a resizing listener in order to adjust the divider
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -49,7 +49,6 @@ public class SSplitPane extends JSplitPane {
         SFrame frame = new SFrame();
         SSplitPane splitPane = new SSplitPane();
 
-        // Création de données pour la liste
         DefaultListModel<String> listModel = new DefaultListModel<>();
         listModel.addElement("Élément 1");
         listModel.addElement("Élément 2");
@@ -57,23 +56,19 @@ public class SSplitPane extends JSplitPane {
         listModel.addElement("Élément 4");
         listModel.addElement("Élément 5");
 
-        // Création de la liste personnalisée
         SList<String> sList = new SList<>(listModel);
         SScrollPane leftPane = new SScrollPane(sList, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         splitPane.setLeftComponent(leftPane);
 
-        // SScrollPane comme panneau de contenu à droite
-        // Remplacez ceci par le composant que vous souhaitez afficher dans le SScrollPane
         STextArea textArea = new STextArea("Contenu initial");
-        textArea.setText("selectionner une commande"); // Texte de démonstration
+        textArea.setText("selectionner une commande");
         SScrollPane rightScrollPane = new SScrollPane(textArea);
         splitPane.setRightComponent(rightScrollPane);
 
-        // Gestionnaire d'événements pour la liste
         sList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 String selectedItem = sList.getSelectedValue();
-                textArea.setText("contenu :" + selectedItem); // Texte de démonstration
+                textArea.setText("contenu :" + selectedItem);
             }
         });
 

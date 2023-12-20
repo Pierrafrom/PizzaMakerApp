@@ -1,9 +1,10 @@
 package com.pizzaMakerApp.utils;
 
-import com.pizzaMakerApp.config.DbConfig;
+import com.pizzaMakerApp.config.DBConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Type;
 import java.sql.*;
 
 public class DatabaseManager {
@@ -15,36 +16,79 @@ public class DatabaseManager {
      * @throws SQLException If a database access error occurs or the url is null.
      */
     private static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DbConfig.URL, DbConfig.USER, DbConfig.PASSWORD);
+        return DriverManager.getConnection(DBConfig.URL, DBConfig.USER, DBConfig.PASSWORD);
+    }
+
+
+
+    /**
+     * Executes a given SQL query and returns the resulting ResultSet. This method prepares the statement to prevent SQL injection
+     * and ensures that the query executes safely.
+     *
+     * @param sqlQuery   The SQL query to be executed.
+     * @return A ResultSet object containing the data produced by the given query; never null.
+     * @throws SQLException If there is a problem executing the query.
+     *
+     * @throws SQLException If there is a problem executing the query.
+     * @see <a href="https://docs.oracle.com/javase/tutorial/jdbc/basics/prepared.html">Prepared Statements (Oracle Documentation)</a>
+     * @example
+     * // Example usage:
+     * // Execute a parameterized query with values to inject.
+     * // Define a parameterized SQL query with a placeholder.
+     * String parameterizedQuery = "SELECT * FROM products WHERE category = ?";
+     * // Create an array of parameters to inject into the query.
+     * Object[] params = {"Electronics"};
+     * // Call the executeQuery method to execute the query with parameters.
+     * ResultSet result = executeQuery(parameterizedQuery, params);
+     * // Process the ResultSet...
+     */
+    public static ResultSet sendQuery(String sqlQuery) throws SQLException {
+        return sendQuery(sqlQuery, (Object[]) null);
     }
 
     /**
-     * Executes a given SQL query and returns the resulting ResultSet.
-     * The method prepares the statement to prevent SQL injection and ensures that the
-     * query executes safely.
+     * Executes a given SQL query with a single parameter and returns the resulting ResultSet. This method prepares the statement
+     * to prevent SQL injection and ensures that the query executes safely.
      *
-     * @param sqlQuery The SQL query to be executed.
-     * @param type     The type of query to be executed. 0 for a simple statement, 1 for a prepared statement.
+     * @param sqlQuery   The SQL query to be executed.
+     * @param parameter  The single parameter value to be injected into the query.
      * @return A ResultSet object containing the data produced by the given query; never null.
      * @throws SQLException If there is a problem executing the query.
      */
-    public static ResultSet sendQuery(String sqlQuery, int type) throws SQLException {
+    public static ResultSet sendQuery(String sqlQuery, Object parameter) throws SQLException {
+        return sendQuery(sqlQuery, new Object[]{parameter});
+    }
+
+    /**
+     * Executes a given SQL query with an array of parameters and returns the resulting ResultSet. This method prepares the statement
+     * to prevent SQL injection and ensures that the query executes safely.
+     *
+     * @param sqlQuery   The SQL query to be executed.
+     * @param parameters An array of objects containing values to be injected into the query. This array can be empty (null) if no
+     *                   values need to be injected.
+     * @return A ResultSet object containing the data produced by the given query; never null.
+     * @throws SQLException If there is a problem executing the query.
+     */
+    public static ResultSet sendQuery(String sqlQuery, Object[] parameters) throws SQLException {
         Connection connection = getConnection();
         try {
-            if (type == 0) {
-                Statement statement = connection.createStatement();
-                return statement.executeQuery(sqlQuery);
-            } else {
-                PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery,
-                        ResultSet.TYPE_SCROLL_INSENSITIVE,
-                        ResultSet.CONCUR_READ_ONLY);
-                return preparedStatement.executeQuery();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery,
+                    ResultSet.TYPE_SCROLL_INSENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);
+
+            if (parameters != null) {
+                for (int i = 0; i < parameters.length; i++) {
+                    preparedStatement.setObject(i + 1, parameters[i]);
+                }
             }
+
+            return preparedStatement.executeQuery();
         } catch (SQLException e) {
-            System.out.println("Problème lors de l'exécution de la requete : " + sqlQuery);
+            System.out.println("Problem executing the query: " + sqlQuery);
             throw e;
         }
     }
+
 
     /**
      * Prints the result set from a database query to the console in a formatted table. Each row of the table
@@ -110,7 +154,7 @@ public class DatabaseManager {
 
     public static void main(String[] args) {
         try {
-            printFormattedResults(sendQuery("SELECT * FROM VIEW_ORDER_SUMMARY", 1));
+            printFormattedResults(sendQuery("SELECT * FROM VIEW_ORDER_SUMMARY", null));
         } catch (SQLException e) {
             Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
             logger.error("SQL Exception occurred", e);
