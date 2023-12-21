@@ -27,13 +27,13 @@ import static com.pizzaMakerApp.utils.DatabaseManager.sendQuery;
  * @since 2023-12-10
  */
 public class VPizzaMakerApp {
-    private SFrame frame = new SFrame("TESTING 🔥🥵💀⚠️🥶🥶🥶");
+    private SFrame frame = new SFrame("Pizza Maker App 🍕");
     private int selectedItem;
-    private JTextArea textArea;
+    private STextArea textArea = new STextArea();
     private DefaultListModel<String> listModel;
-    private SButton validateBtn = new SButton("VALIDATE ORDER", SButton.ButtonType.PRIMARY, 5);
-    private SButton refreshBtn = new SButton("REFRESH ORDERS", SButton.ButtonType.NEUTRAL, 5);
-    private SButton refuseBtn = new SButton("REFUSE ORDER", SButton.ButtonType.ERROR, 5);
+    private SButton validateBtn = new SButton("VALIDATE ORDER", SButton.ButtonType.PRIMARY, 10);
+    private SButton refreshBtn = new SButton("REFRESH ORDERS", SButton.ButtonType.NEUTRAL, 10);
+    private SButton refuseBtn = new SButton("REFUSE ORDER", SButton.ButtonType.ERROR, 10);
 
 
     /**
@@ -69,14 +69,14 @@ public class VPizzaMakerApp {
         listModel = new DefaultListModel<>();
         populateListModel(listModel);
         SList<String> sList = new SList<>(listModel);
-        SScrollPane leftPane = new SScrollPane(sList, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        SScrollPane leftPane = new SScrollPane(sList, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         splitPane.setLeftComponent(leftPane);
 
-        STextArea textArea = new STextArea();
-        textArea.setText("select an order");
+        textArea.setText("SELECT AN ORDER");
         SScrollPane rightScrollPane = new SScrollPane(textArea);
         rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
 
         SPanel rightPanel = new SPanel(new BorderLayout());
         // Panel to hold both buttons with BoxLayout for horizontal centering
@@ -123,7 +123,6 @@ public class VPizzaMakerApp {
 
         contentPanel.add(splitPane, BorderLayout.CENTER);
 
-        // Ajout du panel à la fenêtre
         frame.setContentPane(contentPanel);
         frame.setVisible(true);
     }
@@ -179,12 +178,13 @@ public class VPizzaMakerApp {
      */
     private void populateListModel(DefaultListModel<String> listModel) {
         try {
-            String query = "SELECT DISTINCT orderId, orderDate FROM view_order_summary WHERE status = 'PENDING' ORDER BY orderDate";
+            String query = "SELECT DISTINCT orderId, orderDate, clientLastName FROM VIEW_ORDER_SUMMARY WHERE status = 'PENDING' ORDER BY orderDate";
             try (ResultSet resultSet = sendQuery(query,null)) {
                 while (resultSet.next()) {
                     int orderId = resultSet.getInt("orderId");
                     String orderDate = resultSet.getString("orderDate");
-                    listModel.addElement(orderId+"-         time: "+orderDate);
+                    String clientName = resultSet.getString("clientLastName");
+                    listModel.addElement(orderId+"-  |  name: "+ clientName +"  |  time: "+orderDate);
                 }
             }
         } catch (SQLException e) {
@@ -286,5 +286,6 @@ public class VPizzaMakerApp {
     public void update(){
         listModel.clear();
         populateListModel(listModel);
+        textArea.setText("SELECT AN ORDER");
     }
 }

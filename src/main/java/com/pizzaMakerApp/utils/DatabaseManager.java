@@ -151,13 +151,4 @@ public class DatabaseManager {
             System.out.println();
         }
     }
-
-    public static void main(String[] args) {
-        try {
-            printFormattedResults(sendQuery("SELECT * FROM VIEW_ORDER_SUMMARY", null));
-        } catch (SQLException e) {
-            Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
-            logger.error("SQL Exception occurred", e);
-        }
-    }
 }

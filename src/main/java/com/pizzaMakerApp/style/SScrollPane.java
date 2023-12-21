@@ -49,7 +49,14 @@ public class SScrollPane extends JScrollPane {
         getVerticalScrollBar().setUI(new CustomScrollBarUI());
         getHorizontalScrollBar().setUI(new CustomScrollBarUI());
         getVerticalScrollBar().setUnitIncrement(16); // Adjusts the scrolling speed
+
+        SwingUtilities.invokeLater(() -> {
+            // Set the vertical scroll position to the top
+            JScrollBar verticalScrollBar = getVerticalScrollBar();
+            verticalScrollBar.setValue(verticalScrollBar.getMinimum());
+        });
     }
+
 
     /**
      * CustomScrollBarUI is a private static inner class that customizes the look and behavior
@@ -154,31 +161,4 @@ public class SScrollPane extends JScrollPane {
         }
     }
 
-    /**
-     * Main method to demonstrate the usage of SScrollPane.
-     * This is an example showing how to integrate SScrollPane into a Swing application.
-     *
-     * @param args Command line arguments (not used in this example).
-     */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            // Create the main window
-            JFrame frame = new JFrame("Test SScrollPane");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(400, 300);
-            frame.setMinimumSize(new Dimension(300, 200)); // Taille minimale
-
-            // Add a STextArea to the frame
-            STextArea textArea = new STextArea();
-            textArea.setText("Votre texte ici...\n".repeat(20)); // Texte de démonstration
-
-
-            SScrollPane scrollPane = new SScrollPane(textArea);
-            frame.add(scrollPane, BorderLayout.CENTER);
-
-            // Display the window
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
-    }
 }
