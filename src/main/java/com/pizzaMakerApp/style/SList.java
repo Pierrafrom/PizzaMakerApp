@@ -8,6 +8,9 @@ import java.awt.event.MouseEvent;
 public class SList<T> extends JList<T> {
 
     private int hoveredIndex = -1;
+    public SList() {
+
+    }
 
     public SList(ListModel<T> model) {
         super(model);

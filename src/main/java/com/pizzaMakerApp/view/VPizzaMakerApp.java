@@ -31,8 +31,10 @@ public class VPizzaMakerApp {
     private int selectedItem;
     private STextArea textArea = new STextArea();
     private DefaultListModel<String> listModel;
+    SList<String> sList = new SList<>();
     private SButton validateBtn = new SButton("VALIDATE ORDER", SButton.ButtonType.PRIMARY, 10);
-    private SButton refreshBtn = new SButton("REFRESH ORDERS", SButton.ButtonType.NEUTRAL, 10);
+    //for now the app will refresh itslef every 10 seconds so no need to use this button
+    //private SButton refreshBtn = new SButton("REFRESH ORDERS", SButton.ButtonType.NEUTRAL, 10);
     private SButton refuseBtn = new SButton("REFUSE ORDER", SButton.ButtonType.ERROR, 10);
 
 
@@ -68,7 +70,7 @@ public class VPizzaMakerApp {
         SSplitPane splitPane = new SSplitPane();
         listModel = new DefaultListModel<>();
         populateListModel(listModel);
-        SList<String> sList = new SList<>(listModel);
+        sList = new SList<>(listModel);
         SScrollPane leftPane = new SScrollPane(sList, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         splitPane.setLeftComponent(leftPane);
 
@@ -86,8 +88,8 @@ public class VPizzaMakerApp {
         buttonPanel.add(validateBtn);
         buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(refuseBtn);
-        buttonPanel.add(Box.createHorizontalStrut(10));
-        buttonPanel.add(refreshBtn);
+        //buttonPanel.add(Box.createHorizontalStrut(10));
+        //buttonPanel.add(refreshBtn);
         buttonPanel.add(Box.createHorizontalGlue());
         buttonPanel.setBackground(Style.BACKGROUND_COLOR);
         // Directly adding the button panel to the right panel at the bottom
@@ -148,17 +150,17 @@ public class VPizzaMakerApp {
     public void addRefusePizzaButtonListener(ActionListener listener) {
         refuseBtn.addActionListener(listener);
     }
-
-    /**
+/*
+    **
      * Adds an {@code ActionListener} to the "REFRESH ORDERS" button to listen for button clicks.
      * When the button is clicked, the provided listener is notified.
      *
      * @param listener The {@code ActionListener} to be added.
-     */
+     *
     public void addRefreshPizzaButtonListener(ActionListener listener) {
         refreshBtn.addActionListener(listener);
     }
-
+*/
 
     /**
      * Displays the main application window.
@@ -282,10 +284,51 @@ public class VPizzaMakerApp {
 
     /**
      * Updates the list of orders by clearing and repopulating the list model.
+     * @param refreshAll if it is true we refresh all the app, if not we are refreshing the app,
+     * but we are keeping the selected values
+     *
      */
-    public void update(){
+    public void update(boolean refreshAll) {
+        int selectedIndex = sList.getSelectedIndex();
         listModel.clear();
         populateListModel(listModel);
-        textArea.setText("SELECT AN ORDER");
+        if(refreshAll) {
+            // Set the selected element to the first line
+            if (listModel.getSize() > 0) {
+                selectedItem = extractOrderId(listModel.getElementAt(0));
+                // Assuming extractOrderId is a method that extracts the order ID from the formatted string
+                textArea.setText(displayOrderInfo(selectedItem));
+                sList.setSelectedIndex(0);
+            }
+        }
+        else {
+            if (listModel.getSize() > 0) {
+                sList.setSelectedIndex(selectedIndex);
+            }
+        }
     }
+
+    /**
+     * Extracts the order ID from the formatted string.
+     *
+     * @param formattedString The string containing order details.
+     * @return The extracted order ID.
+     */
+    private int extractOrderId(String formattedString) {
+        // Splitting the formatted string based on the hyphen delimiter
+        String[] parts = formattedString.split("-");
+        if (parts.length > 0) {
+            // Extracting the identifier
+            String identifier = parts[0].trim();
+            // Converting the identifier to an integer if needed
+            try {
+                return Integer.parseInt(identifier);
+            } catch (NumberFormatException ex) {
+                return -1;
+            }
+        } else {
+            return -1;
+        }
+    }
+
 }

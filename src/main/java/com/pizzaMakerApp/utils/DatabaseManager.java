@@ -4,10 +4,11 @@ import com.pizzaMakerApp.config.DBConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Type;
 import java.sql.*;
 
 public class DatabaseManager {
+
+    private static Connection connection;
 
     /**
      * Establishes a database connection using the database configuration specified in DbConfig.
@@ -16,23 +17,41 @@ public class DatabaseManager {
      * @throws SQLException If a database access error occurs or the url is null.
      */
     private static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DBConfig.URL, DBConfig.USER, DBConfig.PASSWORD);
+        if (connection == null || connection.isClosed()) {
+            connection = createConnection();
+        }
+        return connection;
     }
 
-
+    /**
+     * Creates a database connection using the database configuration specified in DbConfig.
+     * This method is called by getConnection() if the connection is null or closed.
+     *
+     * @return A Connection object representing the established database connection.
+     * @throws SQLException If a database access error occurs or the url is null.
+     * @see #getConnection()
+     * @see DBConfig
+     * @see Connection
+     */
+    private static Connection createConnection() throws SQLException {
+        try {
+            Class.forName(DBConfig.DRIVER);
+        } catch (ClassNotFoundException e) {
+            System.out.println("Error loading JDBC driver: " + DBConfig.DRIVER);
+            throw new SQLException(e);
+        }
+        return DriverManager.getConnection(DBConfig.URL, DBConfig.USER, DBConfig.PASSWORD);
+    }
 
     /**
      * Executes a given SQL query and returns the resulting ResultSet. This method prepares the statement to prevent SQL injection
      * and ensures that the query executes safely.
      *
-     * @param sqlQuery   The SQL query to be executed.
+     * @param sqlQuery The SQL query to be executed.
      * @return A ResultSet object containing the data produced by the given query; never null.
      * @throws SQLException If there is a problem executing the query.
-     *
      * @throws SQLException If there is a problem executing the query.
-     * @see <a href="https://docs.oracle.com/javase/tutorial/jdbc/basics/prepared.html">Prepared Statements (Oracle Documentation)</a>
-     * @example
-     * // Example usage:
+     * @example // Example usage:
      * // Execute a parameterized query with values to inject.
      * // Define a parameterized SQL query with a placeholder.
      * String parameterizedQuery = "SELECT * FROM products WHERE category = ?";
@@ -41,6 +60,7 @@ public class DatabaseManager {
      * // Call the executeQuery method to execute the query with parameters.
      * ResultSet result = executeQuery(parameterizedQuery, params);
      * // Process the ResultSet...
+     * @see <a href="https://docs.oracle.com/javase/tutorial/jdbc/basics/prepared.html">Prepared Statements (Oracle Documentation)</a>
      */
     public static ResultSet sendQuery(String sqlQuery) throws SQLException {
         return sendQuery(sqlQuery, (Object[]) null);
@@ -50,8 +70,8 @@ public class DatabaseManager {
      * Executes a given SQL query with a single parameter and returns the resulting ResultSet. This method prepares the statement
      * to prevent SQL injection and ensures that the query executes safely.
      *
-     * @param sqlQuery   The SQL query to be executed.
-     * @param parameter  The single parameter value to be injected into the query.
+     * @param sqlQuery  The SQL query to be executed.
+     * @param parameter The single parameter value to be injected into the query.
      * @return A ResultSet object containing the data produced by the given query; never null.
      * @throws SQLException If there is a problem executing the query.
      */

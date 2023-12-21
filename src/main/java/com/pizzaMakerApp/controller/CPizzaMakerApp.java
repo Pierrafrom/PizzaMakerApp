@@ -6,6 +6,7 @@ import com.pizzaMakerApp.view.VPizzaMakerApp;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import javax.swing.Timer;
 
 
 /**
@@ -20,6 +21,8 @@ import java.sql.SQLException;
 public class CPizzaMakerApp {
     private MPizzaMakerApp model;
     private VPizzaMakerApp view;
+    private Timer refreshTimer;
+
 
     /**
      * Constructs a CPizzaMakerApp instance with the specified model and view.
@@ -58,6 +61,7 @@ public class CPizzaMakerApp {
             }
         });
 
+        /*
         // Adding ActionListener to the button in the view
         view.addRefreshPizzaButtonListener(new ActionListener() {
             @Override
@@ -69,7 +73,19 @@ public class CPizzaMakerApp {
                 }
             }
         });
+        */
 
+        // Initialize the timer with a 10-second delay and set up the ActionListener
+        refreshTimer = new Timer(10000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Call the update method every 10 seconds, we give a "false" because we don't want to reset all the cursors and selected values
+                view.update(false);
+            }
+        });
+
+        // Start the timer
+        refreshTimer.start();
 
     }
 
@@ -84,7 +100,8 @@ public class CPizzaMakerApp {
      */
     private void handleValidatePizzaButtonClick() throws SQLException {
         model.updateOrderStatus(view.getSelectedItem(), 1);
-        view.update();
+        // we give a true because we want to reset the selected values and refresh the app
+        view.update(true);
         System.out.println("validated");
 
     }
@@ -100,21 +117,23 @@ public class CPizzaMakerApp {
      */
     private void handleRefusePizzaButtonClick() throws SQLException {
         model.updateOrderStatus(view.getSelectedItem(), 0);
-        view.update();
+        // we give a true because we want to reset the selected values and refresh the app
+        view.update(true);
         System.out.println("canceled");
     }
-
-    /**
+/*
+    **
      * Handles the action event when the "REFRESH ORDER" button is clicked.
      * Updates the whole app and notifies that the
      * order has been refused.
      *
      * @throws SQLException If a database access error occurs.
-     */
+     *
     private void handleRefreshPizzaButtonClick() throws SQLException {
-        view.update();
+        view.update(false);
         System.out.println("orders refreshed");
     }
+    */
 
 
 
