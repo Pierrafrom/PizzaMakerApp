@@ -8,72 +8,72 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * The Dessert class represents a dessert item in the pizza maker application.
+ * The Cocktail class represents a cocktail item in the pizza maker application.
  * It extends the Food class and provides functionality to load details and ingredients
- * for a specific dessert from the database.
+ * for a specific cocktail from the database.
  * <p>
- * The dessert details include the name, price, and a list of ingredients.
- * The ingredients are loaded from the VIEW_DESSERT_INGREDIENTS table in the database.
+ * The cocktail details include the name, price, and a list of ingredients.
+ * The ingredients are loaded from the VIEW_COCKTAIL_INGREDIENTS table in the database.
  * <p>
  * Usage:
- * To instantiate a Dessert object, provide the dessert ID as a parameter to the constructor.
+ * To instantiate a Cocktail object, provide the cocktail ID as a parameter to the constructor.
  * After instantiation, the details and ingredients can be accessed using the provided methods.
  */
-public class Dessert extends Food {
+public class Cocktail extends Food {
     /**
-     * Constructs a Dessert object with the specified ID and loads its details from the database.
+     * Constructs a Cocktail object with the specified ID and loads its details from the database.
      *
-     * @param id The unique identifier of the dessert.
+     * @param id The unique identifier of the cocktail.
      */
-    public Dessert(int id) {
+    public Cocktail(int id) {
         this.id = id;
-        loadDessertDetails();
+        loadCocktailDetails();
     }
 
     /**
-     * Loads the details of the dessert from the database, including name, price, and ingredients.
-     * Details are retrieved from the VIEW_DESSERT_INGREDIENTS table.
+     * Loads the details of the cocktail from the database, including name, price, and ingredients.
+     * Details are retrieved from the VIEW_COCKTAIL_INGREDIENTS table.
      */
-    private void loadDessertDetails() {
-        // SQL query to retrieve dessert details by ID from the VIEW_DESSERT_INGREDIENTS table
-        String sqlQuery = "SELECT * FROM VIEW_DESSERT_INGREDIENTS WHERE id = ?";
+    private void loadCocktailDetails() {
+        // SQL query to retrieve cocktail details by ID from the VIEW_COCKTAIL_INGREDIENTS table
+        String sqlQuery = "SELECT * FROM VIEW_COCKTAIL_INGREDIENTS WHERE id = ?";
 
         try {
-            // Execute the SQL query using the DatabaseManager and pass the dessert ID as a parameter
+            // Execute the SQL query using the DatabaseManager and pass the cocktail ID as a parameter
             ResultSet resultSet = DatabaseManager.sendQuery(sqlQuery, this.id);
 
             // Check if there is a result (row) in the ResultSet
             if (resultSet.next()) {
-                // Retrieve and set the dessert name from the ResultSet
+                // Retrieve and set the cocktail name from the ResultSet
                 this.name = resultSet.getString("name");
 
-                // Retrieve and set the dessert price from the ResultSet
+                // Retrieve and set the cocktail price from the ResultSet
                 this.price = resultSet.getFloat("price");
 
-                // Load the dessert ingredients by calling the loadDessertIngredients method
-                this.loadDessertIngredients();
+                // Load the cocktail ingredients by calling the loadCocktailIngredients method
+                this.loadCocktailIngredients();
             }
         } catch (SQLException e) {
             // If an SQL exception occurs, log an error message with details
-            Logger logger = LoggerFactory.getLogger(Dessert.class);
-            logger.error("Error loading dessert details", e);
+            Logger logger = LoggerFactory.getLogger(Cocktail.class);
+            logger.error("Error loading cocktail details", e);
         }
     }
 
 
     /**
-     * Loads the ingredients of the dessert from the database and constructs a formatted string.
-     * Ingredients are retrieved from the VIEW_DESSERT_INGREDIENTS table.
+     * Loads the ingredients of the cocktail from the database and constructs a formatted string.
+     * Ingredients are retrieved from the VIEW_COCKTAIL_INGREDIENTS table.
      */
-    private void loadDessertIngredients() {
-        // StringBuilder to construct the formatted string of dessert ingredients
+    private void loadCocktailIngredients() {
+        // StringBuilder to construct the formatted string of cocktail ingredients
         StringBuilder ingredientsBuilder = new StringBuilder();
 
-        // SQL query to retrieve dessert ingredients by ID from the VIEW_DESSERT_INGREDIENTS table
-        String sqlQuery = "SELECT ingredientName, quantity, unit FROM VIEW_DESSERT_INGREDIENTS WHERE id = ?";
+        // SQL query to retrieve cocktail ingredients by ID from the VIEW_COCKTAIL_INGREDIENTS table
+        String sqlQuery = "SELECT ingredientName, quantity, unit FROM VIEW_COCKTAIL_INGREDIENTS WHERE id = ?";
 
         try {
-            // Execute the SQL query using the DatabaseManager and pass the dessert ID as a parameter
+            // Execute the SQL query using the DatabaseManager and pass the cocktail ID as a parameter
             ResultSet resultSet = DatabaseManager.sendQuery(sqlQuery, this.id);
 
             // Flag to determine whether it's the first ingredient in the loop
@@ -108,8 +108,8 @@ public class Dessert extends Food {
 
         } catch (SQLException e) {
             // If an SQL exception occurs, log an error message with details
-            Logger logger = LoggerFactory.getLogger(Dessert.class);
-            logger.error("Error loading dessert ingredients", e);
+            Logger logger = LoggerFactory.getLogger(Cocktail.class);
+            logger.error("Error loading cocktail ingredients", e);
         }
     }
 }
