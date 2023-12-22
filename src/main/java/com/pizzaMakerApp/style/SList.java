@@ -21,17 +21,6 @@ public class SList<T> extends JList<T> {
      */
     public SList() {
         super();
-    }
-
-    /**
-     * Constructor for SList that takes a ListModel.
-     * Sets up the list with custom rendering, fonts, colors, and mouse interaction behavior.
-     *
-     * @param model The ListModel to use in this list.
-     */
-    public SList(ListModel<T> model) {
-        super(model);
-
         // Set custom cell renderer to modify the look and feel of list items.
         setCellRenderer(new CustomListCellRenderer());
 

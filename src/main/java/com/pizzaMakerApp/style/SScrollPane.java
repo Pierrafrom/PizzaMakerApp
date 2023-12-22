@@ -26,14 +26,20 @@ public class SScrollPane extends JScrollPane {
         setBorder(null); // Removes the default border to adhere to the custom style
     }
 
+    public SScrollPane(int vsbPolicy, int hsbPolicy) {
+        super(vsbPolicy, hsbPolicy);
+        initCustomStyle();
+        setBorder(null); // Removes the default border to adhere to the custom style
+    }
+
     /**
      * Constructor for SScrollPane.
      * Initializes a JScrollPane with a specific view component and scroll bar policies,
      * and applies custom styling.
      *
-     * @param view             The component to display in the scroll pane.
-     * @param vsbPolicy        An integer that specifies the vertical scroll bar policy.
-     * @param hsbPolicy        An integer that specifies the horizontal scroll bar policy.
+     * @param view      The component to display in the scroll pane.
+     * @param vsbPolicy An integer that specifies the vertical scroll bar policy.
+     * @param hsbPolicy An integer that specifies the horizontal scroll bar policy.
      */
     public SScrollPane(Component view, int vsbPolicy, int hsbPolicy) {
         super(view, vsbPolicy, hsbPolicy);

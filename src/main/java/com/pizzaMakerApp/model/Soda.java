@@ -96,6 +96,6 @@ public class Soda extends Food {
      * @return A string representation of the soda.
      */
     public String toString() {
-        return this.getName() + " (" + this.getBottleType() + ")" + " - $" + this.getPrice();
+        return this.getName() + " (" + this.getBottleType() + ") " + this.getPrice() + "€";
     }
 }

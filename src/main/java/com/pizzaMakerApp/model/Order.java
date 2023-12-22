@@ -17,6 +17,11 @@ import java.util.Map;
  * This class is designed to encapsulate all the details of an order including items, quantities, and client information.
  */
 public class Order {
+
+    public enum Status {
+        PENDING, PREPARATION, SHIPPED, DELIVERED, CANCELED
+    }
+
     // Unique identifier for each order.
     private int id;
 
@@ -194,14 +199,27 @@ public class Order {
 
 
     /**
+     * Provides a preview of the order, including its ID, date and time, and client name.
+     * This method is used to display a list of orders in the application.
+     *
+     * @return A string representation of the order.
+     */
+    @Override
+    public String toString() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM HH:mm");
+        String strDate = formatter.format(getDateTime());
+        return getId() + "      " + strDate + "     " + getClientName();
+
+    }
+
+    /**
      * Provides a string representation of the order, including its items and quantities, grouped by item type.
      * This method organizes the items in the order by their type and presents them in a structured format,
      * making it easier to read and understand the contents of the order.
      *
      * @return A string representation of the order.
      */
-    @Override
-    public String toString() {
+    public String display() {
         Map<String, ArrayList<String>> groupedItems = new HashMap<>();
 
         // Iterate through each item and group them by their class type.
@@ -216,20 +234,18 @@ public class Order {
             groupedItems.computeIfAbsent(className, k -> new ArrayList<>());
 
             // Add the item's string representation and quantity to the group.
-            groupedItems.get(className).add(item.toString() + " - Quantity: " + qty);
+            groupedItems.get(className).add(item + " - Quantity: " + qty);
         }
 
         // Construct the final string representation.
         StringBuilder sb = new StringBuilder();
-        sb.append("Order ID: ").append(id).append("\nClient Name: ").append(clientName).append("\nDate/Time: ")
-                .append(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dateTime)).append("\n\nOrder Details:\n");
 
         // Append each group to the string builder.
         for (Map.Entry<String, ArrayList<String>> entry : groupedItems.entrySet()) {
             sb.append("\n").append(entry.getKey()).append(":\n");
             // Add each item in the group with numbering and indentation.
             for (int i = 0; i < entry.getValue().size(); i++) {
-                sb.append("\t").append(i + 1).append(". ").append(entry.getValue().get(i)).append("\n");
+                sb.append(i + 1).append(". ").append(entry.getValue().get(i)).append("\n");
             }
         }
 
@@ -237,14 +253,38 @@ public class Order {
     }
 
     /**
-     * Provides a preview of the order, including its ID, date and time, and client name.
-     * This method is used to display a list of orders in the application.
+     * Updates the status of a specific order in the database based on the given order ID and status type.
      *
-     * @return A string representation of the order.
+     * @param statusType An integer representing the status type (0 for refusal, 1 for validation).
+     * @throws SQLException If a database access error occurs.
      */
-    public String preview() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM HH:mm");
-        String strDate = formatter.format(getDateTime());
-        return getId() + " " + strDate + " " + getClientName();
+    public void updateStatus(Status statusType) throws SQLException {
+        String query;
+        if (statusType == Status.CANCELED) { // Checks if the order is refused (0); if not 0, then it is validated.
+            query = "UPDATE CLIENT_ORDER SET status = 'CANCELED' WHERE orderId = ?;";
+        } else if (statusType == Status.PREPARATION) {
+            query = "UPDATE CLIENT_ORDER SET status = 'PREPARATION' WHERE orderId = ?;";
+        } else {
+            throw new IllegalStateException("Unexpected value: " + statusType);
+        }
+        DatabaseManager.sendQuery(query, getId());
+    }
+
+    /**
+     * Cartographie le statut énuméré en une chaîne correspondante pour la base de données.
+     *
+     * @param status Le statut énuméré.
+     * @return La chaîne correspondante pour la base de données.
+     */
+    private String mapStatusToString(Status status) {
+        // Adapter cette méthode selon la correspondance entre l'énumération et la base de données
+        return switch (status) {
+            case PENDING -> "PENDING";
+            case CANCELED -> "CANCELED";
+            case PREPARATION -> "PREPARATION";
+            case SHIPPED -> "SHIPPED";
+            case DELIVERED -> "DELIVERED";
+            default -> throw new IllegalStateException("Unexpected status: " + status);
+        };
     }
 }
