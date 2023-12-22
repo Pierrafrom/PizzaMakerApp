@@ -1,8 +1,6 @@
 package com.pizzaMakerApp.utils;
 
 import com.pizzaMakerApp.config.DBConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
