@@ -120,6 +120,7 @@ public class Wine extends Food {
      */
     @Override
     public String toString() {
-        return name + " - " + domain + " - " + year + " - " + origin + " - " + color + " - " + bottleType + " - " + price;
+        return getName() + " - " + getDomain() + " - " + getYear() + " - " + getOrigin() + " - " + getColor() + " - "
+                + getBottleType() + " - " + getPrice();
     }
 }

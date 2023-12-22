@@ -96,6 +96,6 @@ public abstract class Food {
      */
     @Override
     public String toString() {
-        return name + '\n' + ingredients + '\n' + price + '€';
+        return getName() + '\n' + getIngredients() + '\n' + getPrice() + '€';
     }
 }

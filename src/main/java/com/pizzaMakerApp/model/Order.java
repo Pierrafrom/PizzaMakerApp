@@ -1,5 +1,6 @@
 package com.pizzaMakerApp.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
 
@@ -11,7 +12,17 @@ public class Order {
     String nameClient;
 
     public Order(int orderId){
-        // TODO: appeler la base de données pour recuperer chaque infos de la commande
-        // appeler chaque constructeur de food et le mettre dans la liste et mettre ka quantité dans la iste quantité
+
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    public String preview(){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM HH:mm");
+        String strDate = formatter.format(dateTime);
+        return id + " " + strDate + " " + nameClient;
     }
 }
