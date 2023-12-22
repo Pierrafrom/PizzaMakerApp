@@ -1,11 +1,3 @@
-/**
- * Represents the ManagerView component of the Pizza Maker application. Displays a scrollable
- * list of orders managed by the OrderManager.
- *
- * @author [Your Name]
- * @version 1.0
- * @since [Date]
- */
 package com.pizzaMakerApp.view;
 
 import com.pizzaMakerApp.model.Order;
@@ -16,6 +8,11 @@ import com.pizzaMakerApp.style.SScrollPane;
 import javax.swing.*;
 import java.util.ArrayList;
 
+/**
+ * Represents the ManagerView component of the Pizza Maker application. Displays a scrollable
+ * list of orders managed by the OrderManager.
+ *
+ */
 public class ManagerView extends SScrollPane {
 
     private OrderManager orderManagerModel;
