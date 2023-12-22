@@ -1,16 +1,18 @@
 package com.pizzaMakerApp.view;
 
-import com.pizzaMakerApp.utils.DatabaseManager;
 import com.pizzaMakerApp.style.*;
 import com.pizzaMakerApp.utils.ImageLoader;
 import com.pizzaMakerApp.utils.ImageResizer;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Type;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -27,15 +29,13 @@ import static com.pizzaMakerApp.utils.DatabaseManager.sendQuery;
  * @since 2023-12-10
  */
 public class VPizzaMakerApp {
-    private SFrame frame = new SFrame("Pizza Maker App 🍕");
-    private int selectedItem;
-    private STextArea textArea = new STextArea();
-    private DefaultListModel<String> listModel;
     SList<String> sList = new SList<>();
-    private SButton validateBtn = new SButton("VALIDATE ORDER", SButton.ButtonType.PRIMARY, 10);
-    //for now the app will refresh itslef every 10 seconds so no need to use this button
-    //private SButton refreshBtn = new SButton("REFRESH ORDERS", SButton.ButtonType.NEUTRAL, 10);
-    private SButton refuseBtn = new SButton("REFUSE ORDER", SButton.ButtonType.ERROR, 10);
+    private final SFrame frame = new SFrame("Pizza Maker App 🍕");
+    private int selectedItem;
+    private final STextArea textArea = new STextArea();
+    private final DefaultListModel<String> listModel;
+    private final SButton validateBtn = new SButton("VALIDATE ORDER", SButton.ButtonType.PRIMARY, 10);
+    private final SButton refuseBtn = new SButton("REFUSE ORDER", SButton.ButtonType.ERROR, 10);
 
 
     /**
@@ -48,7 +48,7 @@ public class VPizzaMakerApp {
         SPanel contentPanel = new SPanel(new BorderLayout());
 
         SPanel titlePanel = new SPanel(new FlowLayout(FlowLayout.CENTER), new Dimension(1920, 100));
-        // load the logo
+        // loading the logo
         ImageIcon imageIcon = ImageLoader.loadImageIcon("logo.png");
         if (imageIcon != null) {
             BufferedImage bufferedImage = ImageResizer.iconToBufferedImage(imageIcon);
@@ -59,28 +59,35 @@ public class VPizzaMakerApp {
 
             JLabel imageLabel = new JLabel(resizedIcon);
             titlePanel.add(imageLabel);
-        }
-        else {
+        } else {
             System.err.println("Image not found or could not be loaded.");
         }
+        // setting up the title of the app
         SLabel titleLabel = new SLabel("Pizza Maker App", SLabel.FontStyle.TITLE);
         titlePanel.add(titleLabel);
         contentPanel.add(titlePanel, BorderLayout.NORTH);
 
+        // creating the split-pane that will contain the left and right panel
         SSplitPane splitPane = new SSplitPane();
+        // creating the list model and then populate it with the data retrieved from the SQL view that summarize the orders
         listModel = new DefaultListModel<>();
         populateListModel(listModel);
         sList = new SList<>(listModel);
-        SScrollPane leftPane = new SScrollPane(sList, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        // attaching a scroll pane to the left panel in case the list is bigger than the left panel
+        SScrollPane leftPane = new SScrollPane(sList, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         splitPane.setLeftComponent(leftPane);
 
+        // setting up the right panel and attaching a scrollbar to it
         textArea.setText("SELECT AN ORDER");
         SScrollPane rightScrollPane = new SScrollPane(textArea);
         rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
+        // creating a text in order to link t
+        JLabel linkLabel = getLinkLabel();
 
-        SPanel rightPanel = new SPanel(new BorderLayout());
+        SPanel rightPanel = new SPanel(new BorderLayout(), new Dimension(200, 40));
         // Panel to hold both buttons with BoxLayout for horizontal centering
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
@@ -88,15 +95,21 @@ public class VPizzaMakerApp {
         buttonPanel.add(validateBtn);
         buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(refuseBtn);
-        //buttonPanel.add(Box.createHorizontalStrut(10));
-        //buttonPanel.add(refreshBtn);
         buttonPanel.add(Box.createHorizontalGlue());
         buttonPanel.setBackground(Style.BACKGROUND_COLOR);
+
+        SPanel linkPanel = new SPanel(new BorderLayout(), new Dimension(200, 30));
+        linkPanel.add(linkLabel, BorderLayout.CENTER);
+
+        SPanel botPanel = new SPanel(new BorderLayout(), new Dimension(200, 70));
+        botPanel.add(buttonPanel, BorderLayout.NORTH);
+        botPanel.add(linkPanel, BorderLayout.SOUTH);
+        botPanel.setBackground(Style.BACKGROUND_COLOR);
+
         // Directly adding the button panel to the right panel at the bottom
-        rightPanel.add(buttonPanel, BorderLayout.SOUTH);
+        rightPanel.add(botPanel, BorderLayout.SOUTH);
         rightPanel.add(rightScrollPane);
         splitPane.setRightComponent(rightPanel);
-
 
 
         sList.addListSelectionListener(e -> {
@@ -112,8 +125,7 @@ public class VPizzaMakerApp {
                         try {
                             selectedItem = Integer.parseInt(identifier);
                             textArea.setText(displayOrderInfo(selectedItem));
-                        }
-                        catch (NumberFormatException ex) {
+                        } catch (NumberFormatException ex) {
                             // Handle the case when the identifier is not a valid integer
                             textArea.setText("Invalid identifier");
                         }
@@ -129,6 +141,24 @@ public class VPizzaMakerApp {
         frame.setVisible(true);
     }
 
+    private static SLabel getLinkLabel() {
+        SLabel linkLabel = new SLabel("<html>Note for teacher: Click <u>here</u> to test the order</html>",
+                SLabel.FontStyle.REGULAR);
+        linkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        linkLabel.setForeground(Style.TEXT_COLOR);
+        linkLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URI("https://iut2orsaybestpizza.duckdns.org/"));
+                } catch (IOException | URISyntaxException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        linkLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        return linkLabel;
+    }
 
 
     /**
@@ -150,17 +180,7 @@ public class VPizzaMakerApp {
     public void addRefusePizzaButtonListener(ActionListener listener) {
         refuseBtn.addActionListener(listener);
     }
-/*
-    **
-     * Adds an {@code ActionListener} to the "REFRESH ORDERS" button to listen for button clicks.
-     * When the button is clicked, the provided listener is notified.
-     *
-     * @param listener The {@code ActionListener} to be added.
-     *
-    public void addRefreshPizzaButtonListener(ActionListener listener) {
-        refreshBtn.addActionListener(listener);
-    }
-*/
+
 
     /**
      * Displays the main application window.
@@ -174,19 +194,21 @@ public class VPizzaMakerApp {
 
     /**
      * Populates the DefaultListModel with order IDs and dates retrieved from the database.
-     * Uses a SQL query to fetch distinct order IDs and dates from the "VIEW_ORDER_SUMMARY" view, the results are ordered by the date.
+     * Uses a SQL query to fetch distinct order IDs and dates from the "VIEW_ORDER_SUMMARY" view,
+     * the results are ordered by the date.
      *
      * @param listModel The DefaultListModel to be populated with order IDs & dates.
      */
     private void populateListModel(DefaultListModel<String> listModel) {
         try {
-            String query = "SELECT DISTINCT orderId, orderDate, clientLastName FROM VIEW_ORDER_SUMMARY WHERE status = 'PENDING' ORDER BY orderDate";
-            try (ResultSet resultSet = sendQuery(query,null)) {
+            String query = "SELECT DISTINCT orderId, orderDate, clientLastName FROM VIEW_ORDER_SUMMARY " +
+                    "WHERE status = 'PENDING' ORDER BY orderDate";
+            try (ResultSet resultSet = sendQuery(query, null)) {
                 while (resultSet.next()) {
                     int orderId = resultSet.getInt("orderId");
                     String orderDate = resultSet.getString("orderDate");
                     String clientName = resultSet.getString("clientLastName");
-                    listModel.addElement(orderId+"-  |  name: "+ clientName +"  |  time: "+orderDate);
+                    listModel.addElement(orderId + "-  |  name: " + clientName + "  |  time: " + orderDate);
                 }
             }
         } catch (SQLException e) {
@@ -221,36 +243,15 @@ public class VPizzaMakerApp {
 
                     if ("PIZZA".equals(itemType) || "PIZZA CUSTOM".equals(itemType)) {
                         String queryIngredients = "SELECT * FROM VIEW_PIZZA_INGREDIENTS WHERE id = " + itemId;
-                        try (ResultSet rs = sendQuery(queryIngredients, null)) {
-                            while (rs.next()) {
-                                String ingredientName = rs.getString("ingredientName");
-                                float quantityIngredient = rs.getFloat("quantity");
-                                String unitIngredient = rs.getString("unit");
-                                ingredients.append(ingredientName).append(" ").append(quantityIngredient).append(unitIngredient).append(" | ");
-                            }
-                        }
+                        displayIngredients(ingredients, queryIngredients);
                     }
                     if ("DESSERT".equals(itemType)) {
                         String queryIngredients = "SELECT * FROM VIEW_DESSERT_INGREDIENTS WHERE id = " + itemId;
-                        try (ResultSet rs = sendQuery(queryIngredients, null)) {
-                            while (rs.next()) {
-                                String ingredientName = rs.getString("ingredientName");
-                                float quantityIngredient = rs.getFloat("quantity");
-                                String unitIngredient = rs.getString("unit");
-                                ingredients.append(ingredientName).append(" ").append(quantityIngredient).append(unitIngredient).append(" | ");
-                            }
-                        }
+                        displayIngredients(ingredients, queryIngredients);
                     }
                     if ("COCKTAIL".equals(itemType)) {
                         String queryIngredients = "SELECT * FROM VIEW_COCKTAIL_INGREDIENTS WHERE id = " + itemId;
-                        try (ResultSet rs = sendQuery(queryIngredients, null)) {
-                            while (rs.next()) {
-                                String ingredientName = rs.getString("ingredientName");
-                                float quantityIngredient = rs.getFloat("quantity");
-                                String unitIngredient = rs.getString("unit");
-                                ingredients.append(ingredientName).append(" ").append(quantityIngredient).append(unitIngredient).append(" | ");
-                            }
-                        }
+                        displayIngredients(ingredients, queryIngredients);
                     }
 
                     orderDetails.append("Item Type: ").append(itemType).append("\n");
@@ -273,6 +274,18 @@ public class VPizzaMakerApp {
         }
     }
 
+    private void displayIngredients(StringBuilder ingredients, String queryIngredients) throws SQLException {
+        try (ResultSet rs = sendQuery(queryIngredients, null)) {
+            while (rs.next()) {
+                String ingredientName = rs.getString("ingredientName");
+                float quantityIngredient = rs.getFloat("quantity");
+                String unitIngredient = rs.getString("unit");
+                ingredients.append(ingredientName).append(" ")
+                        .append(quantityIngredient).append(unitIngredient).append(" | ");
+            }
+        }
+    }
+
     /**
      * Gets the selected item from the list.
      *
@@ -284,15 +297,15 @@ public class VPizzaMakerApp {
 
     /**
      * Updates the list of orders by clearing and repopulating the list model.
-     * @param refreshAll if it is true we refresh all the app, if not we are refreshing the app,
-     * but we are keeping the selected values
      *
+     * @param refreshAll if it is true we refresh all the app, if not we are refreshing the app,
+     *                   but we are keeping the selected values
      */
     public void update(boolean refreshAll) {
         int selectedIndex = sList.getSelectedIndex();
         listModel.clear();
         populateListModel(listModel);
-        if(refreshAll) {
+        if (refreshAll) {
             // Set the selected element to the first line
             if (listModel.getSize() > 0) {
                 selectedItem = extractOrderId(listModel.getElementAt(0));
@@ -300,8 +313,7 @@ public class VPizzaMakerApp {
                 textArea.setText(displayOrderInfo(selectedItem));
                 sList.setSelectedIndex(0);
             }
-        }
-        else {
+        } else {
             if (listModel.getSize() > 0) {
                 sList.setSelectedIndex(selectedIndex);
             }

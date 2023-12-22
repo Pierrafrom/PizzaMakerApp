@@ -43,7 +43,8 @@ public class SList<T> extends JList<T> {
     private class CustomListCellRenderer extends DefaultListCellRenderer {
 
         @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                                                      boolean cellHasFocus) {
             SLabel label = new SLabel(value.toString());
             label.setOpaque(true);
 

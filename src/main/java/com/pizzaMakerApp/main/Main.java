@@ -1,6 +1,5 @@
 package com.pizzaMakerApp.main;
 
-import com.pizzaMakerApp.controller.CPizzaMakerApp;
 import com.pizzaMakerApp.model.MPizzaMakerApp;
 import com.pizzaMakerApp.view.VPizzaMakerApp;
 
