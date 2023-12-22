@@ -271,13 +271,13 @@ public class Order {
     }
 
     /**
-     * Cartographie le statut énuméré en une chaîne correspondante pour la base de données.
+     * Maps the enumerated status to a corresponding string for the database.
      *
-     * @param status Le statut énuméré.
-     * @return La chaîne correspondante pour la base de données.
+     * @param status The enumerated status.
+     * @return The corresponding string for the database.
      */
     private String mapStatusToString(Status status) {
-        // Adapter cette méthode selon la correspondance entre l'énumération et la base de données
+        // Adapt this method according to the mapping between the enumeration and the database
         return switch (status) {
             case PENDING -> "PENDING";
             case CANCELED -> "CANCELED";
@@ -287,4 +287,5 @@ public class Order {
             default -> throw new IllegalStateException("Unexpected status: " + status);
         };
     }
+
 }
