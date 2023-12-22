@@ -44,7 +44,7 @@ public class Soda extends Food {
      */
     private void loadSodaDetails() {
         // SQL query to retrieve soda details by ID from the VIEW_SODA_INGREDIENTS table
-        String sqlQuery = "SELECT * FROM VIEW_SODA_INGREDIENTS WHERE id = ?";
+        String sqlQuery = "SELECT * FROM VIEW_SODA WHERE id = ?";
 
         try {
             // Execute the SQL query using the DatabaseManager and pass the soda ID as a parameter
