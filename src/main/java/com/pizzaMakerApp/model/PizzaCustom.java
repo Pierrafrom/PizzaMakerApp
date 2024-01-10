@@ -50,8 +50,13 @@ public class PizzaCustom extends Pizza {
     private void modifyPizza() {
         // SQL query to retrieve the names, quantities, and units of both added and removed ingredients
         // for this custom pizza.
-        String sqlQuery = "SELECT IngredientAddedName, QuantityAdded, Unit, IngredientRemovedName, QuantityRemoved, " +
-                "Unit2 FROM VIEW_CUSTOM_PIZZAS_WITH_INGREDIENTS WHERE CustomPizzaId = ?";
+        String sqlQuery = "SELECT IngredientAddedName, " +
+                "QuantityAdded, " +
+                "Unit1, " +
+                "IngredientRemovedName, " +
+                "Unit2 " +
+                "FROM VIEW_CUSTOM_PIZZAS_WITH_INGREDIENTS " +
+                "WHERE CustomPizzaId = ?";
 
         // Lists to hold the formatted strings of ingredients to be added and removed.
         ArrayList<String> addedIngredients = new ArrayList<>();
@@ -62,24 +67,22 @@ public class PizzaCustom extends Pizza {
             ResultSet resultSet = DatabaseManager.sendQuery(sqlQuery, this.customPizzaId);
             while (resultSet.next()) {
                 // Retrieve the name, quantity, and unit for each added ingredient.
-                String addedIngredientName = resultSet.getString("IngredientAddedName");
-                float addedQuantity = resultSet.getFloat("QuantityAdded");
-                String addedUnit = resultSet.getString("Unit");
+                if (!resultSet.getString("IngredientAddedName").equals("Empty")) {
+                    String addedIngredientName = resultSet.getString("IngredientAddedName");
+                    float addedQuantity = resultSet.getFloat("QuantityAdded");
+                    String addedUnit = resultSet.getString("Unit1");
 
-                // If there is an added ingredient, format it and add to the list of added ingredients.
-                if (addedIngredientName != null) {
                     String formattedAddedIngredient = String.format("%s (%.2f %s)", addedIngredientName,
                             addedQuantity, addedUnit);
                     addedIngredients.add(formattedAddedIngredient);
                 }
 
                 // Retrieve the name, quantity, and unit for each removed ingredient.
-                String removedIngredientName = resultSet.getString("IngredientRemovedName");
-                float removedQuantity = resultSet.getFloat("QuantityRemoved");
-                String removedUnit = resultSet.getString("Unit2");
+                if (!resultSet.getString("IngredientRemovedName").equals("Empty")) {
+                    String removedIngredientName = resultSet.getString("IngredientRemovedName");
+                    float removedQuantity = resultSet.getFloat("QuantityRemoved");
+                    String removedUnit = resultSet.getString("Unit2");
 
-                // If there is a removed ingredient, format it and add to the list of removed ingredients.
-                if (removedIngredientName != null) {
                     String formattedRemovedIngredient = String.format("%s (%.2f %s)", removedIngredientName,
                             removedQuantity, removedUnit);
                     removedIngredients.add(formattedRemovedIngredient);
