@@ -128,7 +128,7 @@ public class AppController {
      */
     private void initUpdateTimer() {
         // Create a Timer that fires an action event every 60 seconds
-        Timer updateTimer = new Timer(60000, new ActionListener() {
+        Timer updateTimer = new Timer(10000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Trigger an update of the order list without selecting the first item
