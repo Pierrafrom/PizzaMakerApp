@@ -85,7 +85,7 @@ public class Order {
 
                 // Set the date and time of the order.
                 // This assumes all items in an order share the same order date and client.
-                this.dateTime = resultSet.getDate("orderDate");
+                this.dateTime = resultSet.getTimestamp("orderDate");
                 this.clientName = resultSet.getString("clientLastName");
             }
         } catch (SQLException e) {
