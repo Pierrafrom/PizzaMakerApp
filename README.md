@@ -35,13 +35,13 @@ Test the application by placing an order on our <a href="https://iut2orsaybestpi
 
 The project adopts an MVC architecture with dedicated packages for each component:
 
-**config**: Essential configuration constants.
-**controller**: User action handling classes.
-**main**: Main class launching the application.
-**model**: Data structuring classes.
-**style**: Graphic elements of the user interface.
-**utils**: Utility functions.
-**view**: Elements visible to the user.
+**config**: Essential configuration constants.<br>
+**controller**: User action handling classes.<br>
+**main**: Main class launching the application.<br>
+**model**: Data structuring classes.<br>
+**style**: Graphic elements of the user interface.<br>
+**utils**: Utility functions.<br>
+**view**: Elements visible to the user.<br>
 This structure makes the project modular, maintainable, and scalable.
 
 ### Management of Libraries and Dependencies
