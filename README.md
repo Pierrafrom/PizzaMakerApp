@@ -4,7 +4,7 @@ This project was carried out by <a href="https://github.com/Pierrafrom" target="
 
 ## Application Objective
 
-Our application aims to create a complete computer system for a pizzeria. The application presented here is specifically designed for pizzaiolos, aiming to simplify and speed up their work through an intuitive interface. The goal is to minimize the steps and interactions required to prepare a pizza order, optimizing efficiency and providing a fast and satisfying customer experience.
+Our application aims to create a complete computer system for a pizzeria. The application presented here is specifically designed for pizzaiolos, aiming to simplify and speed up their work through an intuitive interface. The goal is to minimize the steps and interactions required to prepare a pizza order, optimizing efficiency and providing a fast and satisfying customer experience. In order to provide the best user experience, the app is permanently refreshing its data synced with <a href="https://github.com/Pierrafrom/PizzeriaDB">our data base</a>.
 
 ## Application Features
 
