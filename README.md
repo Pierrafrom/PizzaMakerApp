@@ -36,10 +36,8 @@ A file `PizzaMakerApp.jar` is available in the `out/artifact/` folder with the c
 
 ## How to Test the Application?
 
-Orders were originally placed through [PizzaHome](https://github.com/Pierrafrom/PizzaHome)
-running on a university-hosted demo instance, which is no longer online.
-Run PizzaHome locally (see its README) and this app will pick up the
-orders it creates, since both read from the same
+Run [PizzaHome](https://github.com/Pierrafrom/PizzaHome) locally to place
+orders — this app will pick them up, since both read from the same
 [PizzeriaDB](https://github.com/Pierrafrom/PizzeriaDB) database.
 
 ## Code Organization
