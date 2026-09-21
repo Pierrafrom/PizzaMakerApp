@@ -1,5 +1,14 @@
 # Pizza Maker App
 
+[![Java](https://img.shields.io/badge/Java-MVC-ED8B00?logo=openjdk&logoColor=white)](pom.xml)
+
+The kitchen-facing order screen of a 3-app pizzeria system: customers order
+through [PizzaHome](https://github.com/Pierrafrom/PizzaHome), pizzaiolos
+accept/refuse and prepare orders here, and
+[PizzaDeliveryApp](https://github.com/Pierrafrom/PizzaDeliveryApp) then
+optimizes who delivers each order. All three share the same database,
+[PizzeriaDB](https://github.com/Pierrafrom/PizzeriaDB).
+
 This project was carried out by <a href="https://github.com/Pierrafrom" target="_blank">Pierre Fromont</a>, <a href="https://github.com/Samuelito78" target ="_blank">Samuel Boix-Segura</a> and <a href="https://github.com/Gayar78" target="_blank">Rémi Thibault</a>.
 
 ## Application Objective
